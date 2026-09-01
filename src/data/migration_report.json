@@ -1,0 +1,133 @@
+{
+  "total_html_files": 657,
+  "non_song_files_count": 10,
+  "expected_song_count": 647,
+  "extracted_song_count": 647,
+  "discrepancies": 0,
+  "songs_with_chords": 93,
+  "songs_with_audio": 92,
+  "duplicate_title_count": 24,
+  "duplicate_examples": [
+    {
+      "title": "ಆಗದು ಸಾಧ್ಯವಾಗದು",
+      "file1": "Agadu-sadhyavagadu.html",
+      "file2": "Agadu-sadhyavagadulyrics.html"
+    },
+    {
+      "title": "ಅಪ್ಪ ನಾ ನಿನ್ನ ಕಾಣುವೇ",
+      "file1": "Appa-na-ninna kanuve.html",
+      "file2": "Appa-na-ninna-kanuve.html"
+    },
+    {
+      "title": "ಅಪ್ಪಾ ಎಂದು ಮುದ್ದಾಗಿ ಕರೆದು",
+      "file1": "Appa-endu-muddagi-karedu.html",
+      "file2": "Appaendumuddaagikaredu191.html"
+    },
+    {
+      "title": "ಆರಾಧನೆ ಆರಾಧನೆ - ಸ್ತುತಿ",
+      "file1": "Aradhane-aradhane-stuthi.html",
+      "file2": "Aradhane-aradhane-stuti.html"
+    },
+    {
+      "title": "ಅತ್ಯಂತ ಪ್ರಿಯ ಯೇಸು",
+      "file1": "Atyanta-priya-yesu.html",
+      "file2": "Atyanta-priya-yesulyrics.html"
+    },
+    {
+      "title": "ಜಯ ಕೊಡುವ ದೇವರಿಗೆ",
+      "file1": "Jaya-koduva-devarige.html",
+      "file2": "Jaya-koduva-devarigelyrics.html"
+    },
+    {
+      "title": "ಆತ್ಮರೇ ಬನ್ನಿ ಪವಿತ್ರಾತ್ಮರೇ ಬನ್ನಿ",
+      "file1": "Atmare-banni-pavitratmare-banni.html",
+      "file2": "Na-stutisuvenu-na-bhajisuvenu.html"
+    },
+    {
+      "title": "ನನಗಾಗಿ ಪ್ರಾಣವ ಕೊಟ್ಟವನೆ",
+      "file1": "Nanagaagipraanavakottavane103.html",
+      "file2": "Nanagagi-pranava-kottavane.html"
+    },
+    {
+      "title": "ಚಲಿಸುವಾ ಆತ್ಮನೇ ಪರಿಶುದ್ಧ",
+      "file1": "Chalisuva-athmane-parisuddha.html",
+      "file2": "Nanna-krupe-ninage-saku.html"
+    },
+    {
+      "title": "ನನ್ನ ಪ್ರಾಣವು ನಿನ್ನ ಬಯಸುತ್ತಿದೆ",
+      "file1": "Nanna-pranavu-ninna-bayasuttide.html",
+      "file2": "Nannapraanavuninnabayasuttide111.html"
+    },
+    {
+      "title": "ನಾನು ಪ್ರಾರ್ಥನೆ ಮಾಡುವಾಗ",
+      "file1": "Naanupraarthanemaaduvaaga190.html",
+      "file2": "Nanu-prarthane-maduvaga.html"
+    },
+    {
+      "title": "ನಿನೇ ನನ್ ದೇವರೆ ನಿನೇ",
+      "file1": "Nine-nan-devare nine.html",
+      "file2": "Nine-nan-devare-nine.html"
+    },
+    {
+      "title": "ಪ್ರಸನ್ನನೇ ಪ್ರಸನ್ನನೇ ಅಪ್ಪಿಕೊಳ್ಳು ಪ್ರಸನ್ನದಿ",
+      "file1": "Elshadaayelshadaayneesarvavallabhanae19.html",
+      "file2": "Prasannanaeprasannanaeappikolluprasannadi18.html"
+    },
+    {
+      "title": "ಆತ್ಮರೇ ಬನ್ನಿ ಪವಿತ್ರಾತ್ಮರೇ ಬನ್ನಿ",
+      "file1": "Atmare-banni-pavitratmare-banni.html",
+      "file2": "Santosha-endendu-santosha.html"
+    },
+    {
+      "title": "ಸೇನಾದಿಶ್ವರನಾದ ಯೆಹೋವನು",
+      "file1": "Senadishvaranada-yehovanu.html",
+      "file2": "Senadisvaranada-yehovanu.html"
+    },
+    {
+      "title": "ಯೇಸು ಬಂದ ಮನೆಯಲ್ಲಿ ಸಂತೋಷವೇ",
+      "file1": "Hosadagi-huttabeku-nanu.html",
+      "file2": "Yesubandamaneyallisantooshave98.html"
+    },
+    {
+      "title": "ಅಪ್ಪ ಅಪ್ಪಾ ಯೇಸಪ್ಪಾ",
+      "file1": "Appa-appa-yesappalyrics.html",
+      "file2": "appa-appa-yesappa.html"
+    },
+    {
+      "title": "ಅರುಣೋದಯ ಸ್ತೋತ್ರ ಬಲಿ",
+      "file1": "Arunodaya-stotra-balilyrics.html",
+      "file2": "arunodaya-stotra-bali.html"
+    },
+    {
+      "title": "ಅತಿ ಬೇಗನೆ ನೀಗುವದೂ",
+      "file1": "Ati-begane-niguvadulyrics.html",
+      "file2": "ati-begane-niguvadu.html"
+    },
+    {
+      "title": "ಹಗಲೆಲ್ಲ ಹಾಡು ನೀನೆ",
+      "file1": "Hagalella-hadu-nine.html",
+      "file2": "hagalella-hadu nine.html"
+    },
+    {
+      "title": "ಹೆದರದಿರು ನನ್ನ ಮನವೇ",
+      "file1": "Hedaradiru-nanna-manave-lyrics.html",
+      "file2": "hedaradiru-nanna-manave.html"
+    },
+    {
+      "title": "ಹೊಸ ಯುಗ ಬಂದಿದೆ",
+      "file1": "Hosa-yuga-bandide.html",
+      "file2": "hosa yuga-bandide.html"
+    },
+    {
+      "title": "ನನ್ನ ಹತ್ತಿರವಿರು ಓ ಯೇಸುವೇ",
+      "file1": "Nannahattiraviruooyesuvae08.html",
+      "file2": "nanna-hattiraviru.html"
+    },
+    {
+      "title": "ಸುಂದರ ರೂಪನೇ",
+      "file1": "Sundara-rupane-lyrics.html",
+      "file2": "sundara-rupane.html"
+    }
+  ],
+  "parsing_warnings": []
+}

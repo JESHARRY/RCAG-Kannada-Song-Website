@@ -1,0 +1,16 @@
+{
+  "name": "ಕ್ರೈಸ್ತ ಆರಾಧನೆ ಹಾಡುಗಳು | Kannada Christian Songs",
+  "short_name": "Kannada Songs",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#4f46e5",
+  "description": "Kannada Christian Songs Lyrics, Chords, Audio Player & PDF Songbook Extraction",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

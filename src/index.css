@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans antialiased selection:bg-amber-400 selection:text-slate-950 transition-colors duration-200;
+  }
+}
+
+/* Chord badge inline styling in normal lyric view */
+[data-chord] {
+  position: relative;
+  display: inline-block;
+  color: #6366f1;
+  font-weight: 700;
+  margin-top: 1.25em;
+  margin-right: 0.25rem;
+}
+
+.dark [data-chord] {
+  color: #a5b4fc;
+}
+
+[data-chord]::before {
+  content: attr(data-chord);
+  position: absolute;
+  top: -1.3em;
+  left: 0;
+  font-size: 0.72em;
+  font-weight: 800;
+  color: #f59e0b;
+  line-height: 1;
+}
+
+.dark [data-chord]::before {
+  color: #fbbf24;
+}
+
+/* Scrollbar utilities */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom transitions for Worship Presentation Studio */
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideLeftIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRightIn {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.anim-fade {
+  animation: slideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-slide-left {
+  animation: slideLeftIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-slide-right {
+  animation: slideRightIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-zoom {
+  animation: zoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

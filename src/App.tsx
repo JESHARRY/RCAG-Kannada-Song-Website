@@ -21,6 +21,7 @@ import { PresentationPage } from './pages/PresentationPage';
 import { PresentationEditorPage } from './pages/PresentationEditorPage';
 import { WorshipSetsPage } from './pages/WorshipSetsPage';
 import { MyPresentationsPage } from './pages/MyPresentationsPage';
+import { AudiencePresentationPage } from './pages/AudiencePresentationPage';
 import { PresentationSlide } from './types/presentation';
 
 export function AppContent() {
@@ -76,6 +77,10 @@ export function AppContent() {
 
   // Route matching
   const renderPage = () => {
+    if (currentPath === '/presentation/display') {
+      return <AudiencePresentationPage />;
+    }
+
     if (currentPath === '/') return <HomePage onNavigate={navigate} onOpenDownloadModal={() => setIsDownloadModalOpen(true)} />;
     if (currentPath === '/songs') return <AllSongsPage onNavigate={navigate} initialCategory="all" />;
     if (currentPath === '/search') return <SearchPage onNavigate={navigate} />;
@@ -150,6 +155,11 @@ export function AppContent() {
 
     return <HomePage onNavigate={navigate} onOpenDownloadModal={() => setIsDownloadModalOpen(true)} />;
   };
+
+  // Dedicated Audience Display route returns isolated page without app shell
+  if (currentPath === '/presentation/display') {
+    return <AudiencePresentationPage />;
+  }
 
   // Fullscreen Presentation Mode check (hides App Shell navigation for pure immersive viewing)
   const isPresentationMode = currentPath === '/presentation' || currentPath.startsWith('/presentation/song/');

@@ -1,5 +1,7 @@
 export type SlideType = 'title' | 'lyrics' | 'chorus' | 'blank' | 'scripture' | 'announcement';
 
+export type DisplayMode = 'LIVE' | 'BLACKOUT' | 'LOGO';
+
 export interface PresentationSlide {
   id: string;
   type: SlideType;
@@ -22,6 +24,9 @@ export interface PresentationTheme {
   overlayOpacity: number;
   fontFamily: string;
   fontSize: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  fontSizePx?: number; // Configurable font size in px e.g. 54 (range 32-96)
+  verticalPositionPercent?: number; // Configurable top offset % e.g. 10 (range 5-50)
+  lineHeight?: number; // Configurable line height e.g. 1.4 (range 1.2-2.0)
   fontWeight: 'normal' | 'medium' | 'bold';
   alignment: 'left' | 'center' | 'right';
   verticalPosition: 'top' | 'center' | 'bottom';
@@ -30,6 +35,40 @@ export interface PresentationTheme {
   textAnimation: 'none' | 'fade-in' | 'rise';
   customBgImage?: string;
   blur?: number;
+}
+
+export interface LiveState {
+  sessionId: string;
+  senderId: string;
+  displayMode: DisplayMode;
+  currentSlide: PresentationSlide;
+  nextSlide?: PresentationSlide;
+  slideIndex: number;
+  totalSlides: number;
+  activeSongTitleKn?: string;
+  activeSongTitleEn?: string;
+  theme: PresentationTheme;
+  showChords: boolean;
+  timestamp: number;
+}
+
+export type PresentationMessageType = 
+  | 'REQUEST_LIVE_STATE'
+  | 'CURRENT_LIVE_STATE'
+  | 'GO_LIVE'
+  | 'LIVE_STATE_UPDATE'
+  | 'BLACKOUT_TOGGLE'
+  | 'LOGO_TOGGLE'
+  | 'PRESENTATION_STOP'
+  | 'PING'
+  | 'PONG';
+
+export interface PresentationMessage {
+  type: PresentationMessageType;
+  senderId: string;
+  sessionId?: string;
+  payload?: LiveState;
+  timestamp: number;
 }
 
 export interface WorshipPresentation {
@@ -65,9 +104,12 @@ export const PRESET_THEMES: PresentationTheme[] = [
     overlayOpacity: 0.2,
     fontFamily: 'Noto Sans Kannada',
     fontSize: 'xl',
+    fontSizePx: 54,
+    verticalPositionPercent: 10,
+    lineHeight: 1.4,
     fontWeight: 'bold',
     alignment: 'center',
-    verticalPosition: 'center',
+    verticalPosition: 'top',
     lineSpacing: 'normal',
     transition: 'fade',
     textAnimation: 'fade-in'
@@ -82,9 +124,12 @@ export const PRESET_THEMES: PresentationTheme[] = [
     overlayOpacity: 0.25,
     fontFamily: 'Noto Sans Kannada',
     fontSize: 'xl',
+    fontSizePx: 54,
+    verticalPositionPercent: 10,
+    lineHeight: 1.4,
     fontWeight: 'bold',
     alignment: 'center',
-    verticalPosition: 'center',
+    verticalPosition: 'top',
     lineSpacing: 'normal',
     transition: 'dissolve',
     textAnimation: 'fade-in'
@@ -99,9 +144,12 @@ export const PRESET_THEMES: PresentationTheme[] = [
     overlayOpacity: 0,
     fontFamily: 'Noto Sans Kannada',
     fontSize: '2xl',
+    fontSizePx: 58,
+    verticalPositionPercent: 10,
+    lineHeight: 1.4,
     fontWeight: 'bold',
     alignment: 'center',
-    verticalPosition: 'center',
+    verticalPosition: 'top',
     lineSpacing: 'relaxed',
     transition: 'fade',
     textAnimation: 'none'
@@ -116,9 +164,12 @@ export const PRESET_THEMES: PresentationTheme[] = [
     overlayOpacity: 0.3,
     fontFamily: 'Noto Sans Kannada',
     fontSize: 'xl',
+    fontSizePx: 54,
+    verticalPositionPercent: 10,
+    lineHeight: 1.4,
     fontWeight: 'bold',
     alignment: 'center',
-    verticalPosition: 'center',
+    verticalPosition: 'top',
     lineSpacing: 'normal',
     transition: 'zoom',
     textAnimation: 'fade-in'
@@ -133,11 +184,15 @@ export const PRESET_THEMES: PresentationTheme[] = [
     overlayOpacity: 0.4,
     fontFamily: 'Noto Sans Kannada',
     fontSize: 'xl',
+    fontSizePx: 50,
+    verticalPositionPercent: 10,
+    lineHeight: 1.5,
     fontWeight: 'medium',
     alignment: 'center',
-    verticalPosition: 'center',
+    verticalPosition: 'top',
     lineSpacing: 'relaxed',
     transition: 'fade',
     textAnimation: 'fade-in'
   }
 ];
+

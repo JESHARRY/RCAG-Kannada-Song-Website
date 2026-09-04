@@ -33,9 +33,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigate('/')} 
             className="cursor-pointer flex items-center gap-2.5"
           >
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-700 to-indigo-900 text-amber-400 flex items-center justify-center font-bold text-base shadow-sm">
-              ✝
-            </div>
+            <img 
+              src="/assets/church-logo.png" 
+              alt="RCAG Worship Logo" 
+              className="w-8 h-8 object-contain shrink-0" 
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
             <div>
               <h1 className="font-kannada font-bold text-sm sm:text-base text-white leading-tight">
                 ಕನ್ನಡ ಕ್ರೈಸ್ತ ಹಾಡುಗಳು

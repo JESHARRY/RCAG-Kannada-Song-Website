@@ -2,6 +2,14 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Song, ExtractedSong, ExtractionHistoryLog } from '../types/song';
 import baseSongsData from '../data/songs.json';
 import migrationReportData from '../data/migration_report.json';
+import { 
+  SongOverride, 
+  getSongOverrides, 
+  saveSongOverride as saveSongOverrideService, 
+  removeSongOverride as removeSongOverrideService, 
+  getResolvedSong as resolveSongHelper,
+  getResolvedSongs as resolveSongsHelper 
+} from '../services/songOverrides';
 
 interface AppContextType {
   songs: Song[];
@@ -15,6 +23,11 @@ interface AppContextType {
   isPlayingAudio: boolean;
   extractionHistory: ExtractionHistoryLog[];
   migrationReport: typeof migrationReportData;
+  songOverrides: Record<string, SongOverride>;
+  getResolvedSong: (song: Song) => Song;
+  hasSongOverride: (songId: string) => boolean;
+  saveSongOverride: (override: SongOverride) => void;
+  removeSongOverride: (songId: string) => void;
   toggleFavorite: (id: string) => void;
   isFavorite: (id: string) => boolean;
   addRecentSong: (id: string) => void;
@@ -38,6 +51,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return [];
     }
   });
+
+  const [songOverrides, setSongOverrides] = useState<Record<string, SongOverride>>(() => getSongOverrides());
+
+  useEffect(() => {
+    const handleOverridesUpdated = () => {
+      setSongOverrides(getSongOverrides());
+    };
+    window.addEventListener('kcs_song_overrides_updated', handleOverridesUpdated);
+    return () => window.removeEventListener('kcs_song_overrides_updated', handleOverridesUpdated);
+  }, []);
 
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
@@ -96,7 +119,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('kcs_theme', theme);
   }, [theme]);
 
-  const allSongs = [...songs, ...importedSongs];
+  // Combine original base songs + imported songs, resolved through songOverrides layer
+  const rawAllSongs = [...songs, ...importedSongs];
+  const allSongs = resolveSongsHelper(rawAllSongs, songOverrides);
+
+  const getResolvedSong = (song: Song) => resolveSongHelper(song, songOverrides);
+
+  const hasSongOverride = (songId: string) => !!songOverrides[songId];
+
+  const saveSongOverride = (override: SongOverride) => {
+    saveSongOverrideService(override);
+    setSongOverrides(getSongOverrides());
+  };
+
+  const removeSongOverride = (songId: string) => {
+    removeSongOverrideService(songId);
+    setSongOverrides(getSongOverrides());
+  };
 
   const toggleFavorite = (id: string) => {
     setFavorites(prev => {
@@ -125,7 +164,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const playAudioSong = (song: Song) => {
-    setCurrentAudioSong(song);
+    const resolved = getResolvedSong(song);
+    setCurrentAudioSong(resolved);
     setIsPlayingAudio(true);
   };
 
@@ -163,6 +203,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isPlayingAudio,
         extractionHistory,
         migrationReport: migrationReportData,
+        songOverrides,
+        getResolvedSong,
+        hasSongOverride,
+        saveSongOverride,
+        removeSongOverride,
         toggleFavorite,
         isFavorite,
         addRecentSong,

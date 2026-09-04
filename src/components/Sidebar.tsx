@@ -117,16 +117,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Drawer Header */}
         <div className="p-4 border-b border-slate-800/80 flex items-center justify-between h-16 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-700 to-indigo-900 text-amber-400 flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
-              ✝
-            </div>
+            <img 
+              src="/assets/church-logo.png" 
+              alt="RCAG Worship Logo" 
+              className="w-9 h-9 object-contain shrink-0" 
+              onError={(e) => {
+                // Fallback to text icon if image fails
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
             {(!isCollapsed || isMobileOpen) && (
               <div className="min-w-0 truncate">
                 <div className="font-kannada font-bold text-sm text-white truncate">
                   ಕನ್ನಡ ಕ್ರೈಸ್ತ ಹಾಡುಗಳು
                 </div>
                 <div className="text-[11px] text-slate-400 truncate font-medium">
-                  Kannada Songs
+                  RCAG Kannada Songs
                 </div>
               </div>
             )}

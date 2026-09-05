@@ -14,7 +14,7 @@ export interface Song {
   originalFile: string;
   hasAudio: boolean;
   hasChords: boolean;
-  sourceType?: 'original_app' | 'pdf';
+  sourceType?: 'original_app' | 'pdf' | 'user_created';
   sourcePdf?: string;
   sourcePageStart?: number;
   sourcePageEnd?: number;

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Star, Play, Copy, Share2, Guitar, Type, FileText, Tv, Edit3, Save, RotateCcw, Check, AlertCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { transposeChordString } from '../utils/chordTransposer';
+import { getSongNumber, formatSongNumber } from '../utils/searchEngine';
 
 interface SongDetailPageProps {
   songId: string;
@@ -9,13 +10,13 @@ interface SongDetailPageProps {
 }
 
 export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNavigate }) => {
-  const { 
-    allSongs, 
-    isFavorite, 
-    toggleFavorite, 
-    addRecentSong, 
-    playAudioSong, 
-    fontSize, 
+  const {
+    allSongs,
+    isFavorite,
+    toggleFavorite,
+    addRecentSong,
+    playAudioSong,
+    fontSize,
     setFontSize,
     saveSongOverride,
     removeSongOverride,
@@ -161,15 +162,13 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
     <div className="max-w-4xl mx-auto space-y-6 pb-20 font-sans">
       {/* Header Container */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
-        
+
         {/* Title Section */}
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            {song.number && (
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800">
-                #{song.number}
-              </span>
-            )}
+            <span className="font-mono font-extrabold text-xs px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-amber-400 tracking-wider">
+              {formatSongNumber(getSongNumber(song))}
+            </span>
             {song.category && (
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 uppercase">
                 {song.category}
@@ -204,7 +203,7 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
 
         {/* Toolbar Controls */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
-          
+
           {/* Main Presentation & Edit Action Buttons */}
           <div className="flex flex-wrap items-center gap-2">
             <button
@@ -218,8 +217,8 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
             <button
               onClick={() => setIsEditing(prev => !prev)}
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full font-bold text-xs border transition-colors ${
-                isEditing 
-                  ? 'bg-amber-400 text-slate-950 border-amber-300' 
+                isEditing
+                  ? 'bg-amber-400 text-slate-950 border-amber-300'
                   : 'bg-indigo-950/80 text-indigo-300 border-indigo-800 hover:bg-indigo-900'
               }`}
             >
@@ -265,7 +264,7 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
 
           {/* Additional Controls */}
           <div className="flex flex-wrap items-center gap-2">
-            
+
             {/* Chord Transposer if chords exist */}
             {song.hasChords && (
               <div className="flex items-center gap-1.5 bg-indigo-950/60 px-3 py-1.5 rounded-xl text-indigo-300 text-xs font-bold border border-indigo-800">

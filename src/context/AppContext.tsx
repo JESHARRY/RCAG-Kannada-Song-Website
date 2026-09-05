@@ -2,18 +2,19 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Song, ExtractedSong, ExtractionHistoryLog } from '../types/song';
 import baseSongsData from '../data/songs.json';
 import migrationReportData from '../data/migration_report.json';
-import { 
-  SongOverride, 
-  getSongOverrides, 
-  saveSongOverride as saveSongOverrideService, 
-  removeSongOverride as removeSongOverrideService, 
+import {
+  SongOverride,
+  getSongOverrides,
+  saveSongOverride as saveSongOverrideService,
+  removeSongOverride as removeSongOverrideService,
   getResolvedSong as resolveSongHelper,
-  getResolvedSongs as resolveSongsHelper 
+  getResolvedSongs as resolveSongsHelper
 } from '../services/songOverrides';
 
 interface AppContextType {
   songs: Song[];
   importedSongs: Song[];
+  userCreatedSongs: Song[];
   allSongs: Song[];
   favorites: string[];
   recentSongIds: string[];
@@ -28,6 +29,8 @@ interface AppContextType {
   hasSongOverride: (songId: string) => boolean;
   saveSongOverride: (override: SongOverride) => void;
   removeSongOverride: (songId: string) => void;
+  addUserSong: (song: Song) => void;
+  deleteUserSong: (id: string) => void;
   toggleFavorite: (id: string) => void;
   isFavorite: (id: string) => boolean;
   addRecentSong: (id: string) => void;
@@ -46,6 +49,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [importedSongs, setImportedSongs] = useState<Song[]>(() => {
     try {
       const saved = localStorage.getItem('kcs_react_imported');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [userCreatedSongs, setUserCreatedSongs] = useState<Song[]>(() => {
+    try {
+      const saved = localStorage.getItem('kcs_react_user_songs');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -119,8 +131,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('kcs_theme', theme);
   }, [theme]);
 
-  // Combine original base songs + imported songs, resolved through songOverrides layer
-  const rawAllSongs = [...songs, ...importedSongs];
+  // Combine original base songs + imported songs + userCreatedSongs, resolved through songOverrides layer
+  const rawAllSongs = [...songs, ...importedSongs, ...userCreatedSongs];
   const allSongs = resolveSongsHelper(rawAllSongs, songOverrides);
 
   const getResolvedSong = (song: Song) => resolveSongHelper(song, songOverrides);
@@ -135,6 +147,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const removeSongOverride = (songId: string) => {
     removeSongOverrideService(songId);
     setSongOverrides(getSongOverrides());
+  };
+
+  const addUserSong = (newSong: Song) => {
+    setUserCreatedSongs(prev => {
+      const updated = [newSong, ...prev];
+      localStorage.setItem('kcs_react_user_songs', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const deleteUserSong = (id: string) => {
+    setUserCreatedSongs(prev => {
+      const updated = prev.filter(s => s.id !== id);
+      localStorage.setItem('kcs_react_user_songs', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const toggleFavorite = (id: string) => {
@@ -194,6 +222,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         songs,
         importedSongs,
+        userCreatedSongs,
         allSongs,
         favorites,
         recentSongIds,
@@ -208,6 +237,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         hasSongOverride,
         saveSongOverride,
         removeSongOverride,
+        addUserSong,
+        deleteUserSong,
         toggleFavorite,
         isFavorite,
         addRecentSong,

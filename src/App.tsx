@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/Navbar';
-import { Sidebar } from './components/Sidebar';
 import { AudioPlayerBar } from './components/AudioPlayerBar';
 import { DownloadSongbookModal } from './components/DownloadSongbookModal';
 
@@ -27,18 +26,6 @@ import { PresentationSlide } from './types/presentation';
 export function AppContent() {
   const { allSongs } = useApp();
   const [currentPath, setCurrentPath] = useState(window.location.hash.slice(1) || '/');
-  
-  // Mobile off-canvas drawer state
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-
-  // Desktop sidebar collapsed state persisted in localStorage
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('kcs_sidebar_collapsed') === 'true';
-    } catch {
-      return false;
-    }
-  });
 
   // Download Songbook Modal state
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
@@ -60,14 +47,6 @@ export function AppContent() {
   const navigate = (path: string) => {
     window.location.hash = path;
     setCurrentPath(path);
-  };
-
-  const toggleCollapse = () => {
-    setIsCollapsed(prev => {
-      const next = !prev;
-      localStorage.setItem('kcs_sidebar_collapsed', String(next));
-      return next;
-    });
   };
 
   const handleLaunchPresentation = (slides: PresentationSlide[]) => {
@@ -173,33 +152,21 @@ export function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-row font-sans transition-colors duration-200">
-      
-      {/* 1. App Shell Sidebar (Flex child on desktop, Off-canvas drawer on mobile) */}
-      <Sidebar
-        isMobileOpen={isMobileOpen}
-        onCloseMobile={() => setIsMobileOpen(false)}
-        isCollapsed={isCollapsed}
-        onToggleCollapse={toggleCollapse}
-        currentPath={currentPath}
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans transition-colors duration-200">
+
+      {/* 1. Global Header Navigation (Full Width with Centered Church Branding & Menu) */}
+      <Navbar
         onNavigate={navigate}
         onOpenDownloadModal={() => setIsDownloadModalOpen(true)}
+        currentPath={currentPath}
       />
 
-      {/* 2. Main Shell (Spans remaining available width dynamically) */}
-      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
-        <Navbar
-          onToggleMobileSidebar={() => setIsMobileOpen(prev => !prev)}
-          onNavigate={navigate}
-          onOpenDownloadModal={() => setIsDownloadModalOpen(true)}
-        />
+      {/* 2. Main Content Shell (Full Width Viewport) */}
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+        {renderPage()}
+      </main>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 min-w-0">
-          {renderPage()}
-        </main>
-
-        <AudioPlayerBar />
-      </div>
+      <AudioPlayerBar />
 
       {/* 3. Global Download Songbook Modal */}
       <DownloadSongbookModal

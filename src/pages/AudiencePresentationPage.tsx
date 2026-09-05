@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PresentationChannel } from '../services/presentationChannel';
 import { LiveState, PresentationMessage, PRESET_THEMES } from '../types/presentation';
+import { CHURCH_LOGO_URL } from '../utils/assetPath';
 
 export const AudiencePresentationPage: React.FC = () => {
   const [liveState, setLiveState] = useState<LiveState | null>(() => {
@@ -96,7 +97,7 @@ export const AudiencePresentationPage: React.FC = () => {
   // 1. BLACKOUT MODE
   if (displayMode === 'BLACKOUT') {
     return (
-      <div 
+      <div
         onDoubleClick={handleDoubleClick}
         className="fixed inset-0 z-[99999] bg-black w-screen h-screen overflow-hidden select-none cursor-none"
       />
@@ -106,7 +107,7 @@ export const AudiencePresentationPage: React.FC = () => {
   // 2. LOGO / BRANDING IDLE MODE
   if (displayMode === 'LOGO' || !currentSlide) {
     return (
-      <div 
+      <div
         onDoubleClick={handleDoubleClick}
         className="fixed inset-0 z-[99999] bg-slate-950 text-white w-screen h-screen overflow-hidden select-none flex flex-col items-center justify-center p-8 cursor-pointer"
         style={{
@@ -114,9 +115,9 @@ export const AudiencePresentationPage: React.FC = () => {
         }}
       >
         <div className="flex flex-col items-center justify-center space-y-6 text-center animate-fade max-w-xl">
-          <img 
-            src="/assets/church-logo.png" 
-            alt="RCAG Worship Logo" 
+          <img
+            src={CHURCH_LOGO_URL}
+            alt="RCAG Worship Logo"
             className="w-36 h-36 object-contain drop-shadow-2xl animate-pulse"
             onError={(e) => {
               // Fallback if asset fails
@@ -143,7 +144,7 @@ export const AudiencePresentationPage: React.FC = () => {
 
   // 3. LIVE PRESENTATION MODE (Top-Center Layout)
   return (
-    <div 
+    <div
       onDoubleClick={handleDoubleClick}
       className="fixed inset-0 z-[99999] bg-black w-screen h-screen overflow-hidden select-none cursor-none"
       style={{
@@ -154,10 +155,10 @@ export const AudiencePresentationPage: React.FC = () => {
     >
       {/* Background Overlay */}
       {theme.overlayOpacity > 0 && (
-        <div 
+        <div
           className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-          style={{ 
-            backgroundColor: '#000000', 
+          style={{
+            backgroundColor: '#000000',
             opacity: theme.overlayOpacity,
             filter: theme.blur ? `blur(${theme.blur}px)` : 'none'
           }}
@@ -187,7 +188,7 @@ export const AudiencePresentationPage: React.FC = () => {
       </div>
 
       {/* Main Stanza Content Canvas (POSITIONED NEAR TOP, HORIZONTALLY CENTERED) */}
-      <div 
+      <div
         className="absolute z-10 space-y-6"
         style={{
           top: `${verticalPos}%`,
@@ -202,7 +203,7 @@ export const AudiencePresentationPage: React.FC = () => {
             [ Worship Pause ]
           </div>
         ) : (
-          <div 
+          <div
             key={currentSlide.id + liveState?.slideIndex}
             className={`w-full space-y-5 transition-all duration-300 ${
               theme.transition === 'slide-left' ? 'anim-slide-left' :
@@ -216,7 +217,7 @@ export const AudiencePresentationPage: React.FC = () => {
           >
             {/* Stanza Badge Header */}
             {currentSlide.title && (
-              <div 
+              <div
                 className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full font-bold text-xs md:text-sm uppercase tracking-widest border border-current opacity-80 backdrop-blur-sm"
                 style={{ borderColor: theme.accentColor, color: theme.accentColor }}
               >
@@ -232,7 +233,7 @@ export const AudiencePresentationPage: React.FC = () => {
             )}
 
             {/* Lyric Content Text (Explicit Font Size & Line Height) */}
-            <div 
+            <div
               className="font-bold whitespace-pre-line tracking-wide drop-shadow-2xl"
               style={{
                 fontSize: `${fontSizePx}px`,

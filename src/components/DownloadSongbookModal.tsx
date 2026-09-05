@@ -20,8 +20,7 @@ export const DownloadSongbookModal: React.FC<DownloadSongbookModalProps> = ({ is
 
   if (!isOpen) return null;
 
-  const baseSongsCount = allSongs.filter(s => s.sourceType !== 'pdf' || !s.sourceType).length;
-  const countToUse = baseSongsCount >= 647 ? baseSongsCount : allSongs.length;
+  const countToUse = allSongs.length;
 
   const handleStartDownload = async () => {
     setIsGenerating(true);
@@ -41,7 +40,7 @@ export const DownloadSongbookModal: React.FC<DownloadSongbookModalProps> = ({ is
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6">
-        
+
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-3">

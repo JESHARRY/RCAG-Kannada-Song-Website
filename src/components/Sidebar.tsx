@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { 
-  Home, 
-  Music, 
-  Guitar, 
-  Headphones, 
-  Star, 
+import {
+  Home,
+  Music,
+  Guitar,
+  Headphones,
+  Star,
   Search as SearchIcon,
   BarChart2,
   ChevronLeft,
@@ -19,6 +19,7 @@ import {
   ListMusic
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { CHURCH_LOGO_URL } from '../utils/assetPath';
 
 interface SidebarProps {
   isMobileOpen: boolean;
@@ -55,13 +56,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const navSections = [
     {
+      sectionHeader: 'LIBRARY',
       items: [
         { label: 'HOME', path: '/', icon: Home },
         { label: 'ALL SONGS', path: '/songs', icon: Music, count: allSongs.length },
         { label: 'SEARCH', path: '/search', icon: SearchIcon },
         { label: 'CATEGORIES', path: '/categories', icon: Music },
         { label: 'LYRICS WITH CHORDS', path: '/category/chords', icon: Guitar },
-        { label: 'AUDIO SONGS', path: '/category/audio', icon: Headphones },
         { label: 'FAVORITES', path: '/favorites', icon: Star, count: favorites.length },
       ]
     },
@@ -105,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         className={`
           /* Position & Flex Responsibilities */
           h-screen sticky top-0 shrink-0 z-50 bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-300 ease-in-out text-slate-200
-          
+
           /* Mobile Drawer Position */
           max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:w-72
           ${isMobileOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'}
@@ -117,10 +118,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Drawer Header */}
         <div className="p-4 border-b border-slate-800/80 flex items-center justify-between h-16 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <img 
-              src="/assets/church-logo.png" 
-              alt="RCAG Worship Logo" 
-              className="w-9 h-9 object-contain shrink-0" 
+            <img
+              src={CHURCH_LOGO_URL}
+              alt="RCAG Worship Logo"
+              className="w-9 h-9 object-contain shrink-0"
               onError={(e) => {
                 // Fallback to text icon if image fails
                 (e.target as HTMLElement).style.display = 'none';

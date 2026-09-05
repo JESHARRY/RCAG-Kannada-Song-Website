@@ -27,14 +27,6 @@ export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate }) =>
       path: '/category/chords',
     },
     {
-      id: 'audio',
-      title: '🎵 Audio Songs',
-      subtitle: 'Songs with streamable audio player stream links',
-      count: allSongs.filter(s => s.hasAudio).length,
-      color: 'from-cyan-600 to-teal-600',
-      path: '/category/audio',
-    },
-    {
       id: 'favorites',
       title: '⭐ Favorites',
       subtitle: 'Your saved favorite songs for quick access',

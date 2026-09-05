@@ -40,8 +40,8 @@ export const FavoritesPage: React.FC<FavoritesPageProps> = ({ onNavigate }) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {favSongs.map(song => (
-            <SongCard key={song.id} song={song} onNavigate={onNavigate} />
+          {favSongs.map((song, idx) => (
+            <SongCard key={song.id} song={song} index={idx} onNavigate={onNavigate} />
           ))}
         </div>
       )}

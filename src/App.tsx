@@ -21,6 +21,7 @@ import { PresentationEditorPage } from './pages/PresentationEditorPage';
 import { WorshipSetsPage } from './pages/WorshipSetsPage';
 import { MyPresentationsPage } from './pages/MyPresentationsPage';
 import { AudiencePresentationPage } from './pages/AudiencePresentationPage';
+import { PreachingNotesPage } from './pages/PreachingNotesPage';
 import { PresentationSlide } from './types/presentation';
 
 export function AppContent() {
@@ -127,6 +128,10 @@ export function AppContent() {
       );
     }
 
+    if (currentPath === '/preaching-notes') {
+      return <PreachingNotesPage onNavigate={navigate} />;
+    }
+
     if (currentPath.startsWith('/song/')) {
       const songId = currentPath.replace('/song/', '');
       return <SongDetailPage songId={songId} onNavigate={navigate} />;
@@ -141,7 +146,7 @@ export function AppContent() {
   }
 
   // Fullscreen Presentation Mode check (hides App Shell navigation for pure immersive viewing)
-  const isPresentationMode = currentPath === '/presentation' || currentPath.startsWith('/presentation/song/');
+  const isPresentationMode = currentPath === '/presentation' || currentPath.startsWith('/presentation/song/') || currentPath === '/preaching-notes';
 
   if (isPresentationMode) {
     return (

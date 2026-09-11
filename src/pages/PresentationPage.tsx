@@ -27,7 +27,11 @@ import {
   Moon,
   Layers,
   Square,
-  Shield
+  Shield,
+  Plus,
+  Trash2,
+  FileText,
+  CheckCircle2
 } from 'lucide-react';
 
 import { Song } from '../types/song';
@@ -132,6 +136,16 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showShortcutsHelp, setShowShortcutsHelp] = useState<boolean>(false);
   const [savedWorshipSets, setSavedWorshipSets] = useState<WorshipSet[]>([]);
+
+  // ----------------------------------------------------
+  // END WORSHIP & PREACHING NOTES NAVIGATION
+  // ----------------------------------------------------
+  const [showEndWorshipModal, setShowEndWorshipModal] = useState<boolean>(false);
+
+  const handleStartPreachingNotes = () => {
+    setShowEndWorshipModal(false);
+    onNavigate('/preaching-notes');
+  };
 
   // ----------------------------------------------------
   // 1. BROADCAST CHANNEL INITIALIZATION & HANDSHAKE
@@ -590,8 +604,17 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
           </div>
         </div>
 
-        {/* Right: Emergency Blackout & Logo Controls */}
+        {/* Right: Emergency Blackout, Logo & End Worship Controls */}
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowEndWorshipModal(true)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white font-extrabold text-xs shadow-md border border-purple-400/40 transition-all hover:scale-105"
+            title="Complete worship presentation & switch to preaching notes mode"
+          >
+            <FileText className="w-4 h-4 text-amber-300" />
+            <span>END WORSHIP</span>
+          </button>
+
           <button
             onClick={handleToggleBlackout}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs border transition-colors ${
@@ -631,277 +654,270 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
       </div>
 
       {/* ==================================================== */}
-      {/* 3. MAIN DASHBOARD: 2 COLUMNS (OPERATOR & AUDIENCE) */}
+      {/* 3. MAIN DASHBOARD: WORSHIP PRESENTATION STUDIO */}
       {/* ==================================================== */}
       <main className="flex-1 p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto w-full min-h-0">
 
-        {/* ---------------------------------------------------- */}
-        {/* LEFT COLUMN: SONG SEARCH, SETS & STANZA THUMBNAILS  */}
-        {/* ---------------------------------------------------- */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-5 flex flex-col min-h-0">
+          {/* ---------------------------------------------------- */}
+          {/* LEFT COLUMN: SONG SEARCH, SETS & STANZA THUMBNAILS  */}
+          {/* ---------------------------------------------------- */}
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-5 flex flex-col min-h-0">
 
-          {/* Song Search Box */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <Search className="w-3.5 h-3.5 text-amber-400" />
-                <span>Search 647 Songs Catalog</span>
-              </span>
-              <span className="text-[10px] text-slate-500">(Preview only)</span>
-            </div>
+            {/* Song Search Box */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <Search className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Search 647 Songs Catalog</span>
+                </span>
+                <span className="text-[10px] text-slate-500">(Preview only)</span>
+              </div>
 
-            <div className="relative">
-              <input
-                type="text"
-                value={songSearchQuery}
-                onChange={(e) => setSongSearchQuery(e.target.value)}
-                placeholder="Search Kannada or English title..."
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-white focus:outline-none focus:border-indigo-500"
-              />
-              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              {songSearchQuery && (
-                <button
-                  onClick={() => setSongSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={songSearchQuery}
+                  onChange={(e) => setSongSearchQuery(e.target.value)}
+                  placeholder="Search song title or number..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                {songSearchQuery && (
+                  <button
+                    onClick={() => setSongSearchQuery('')}
+                    className="absolute right-3 top-3 text-slate-500 hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Search Results Dropdown */}
+              {songSearchQuery.trim() !== '' && (
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-2 space-y-1 max-h-48 overflow-y-auto shadow-xl">
+                  {searchResults.length > 0 ? (
+                    searchResults.map(song => (
+                      <button
+                        key={song.id}
+                        onClick={() => handleSelectPreviewSong(song)}
+                        className="w-full text-left p-2 rounded-xl hover:bg-slate-800 transition-colors flex items-center justify-between gap-2"
+                      >
+                        <div className="truncate">
+                          <div className="font-kannada font-bold text-xs text-amber-300 truncate">
+                            {song.number}. {song.titleKannada}
+                          </div>
+                          {song.titleEnglish && (
+                            <div className="text-[10px] text-slate-400 truncate">
+                              {song.titleEnglish}
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[10px] font-mono text-indigo-400 bg-indigo-950 px-2 py-0.5 rounded border border-indigo-800">
+                          Load Preview
+                        </span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="text-xs text-slate-500 p-2 text-center">No songs match your search</div>
+                  )}
+                </div>
               )}
             </div>
 
-            {/* Search Results Dropdown */}
-            {searchResults.length > 0 && (
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl max-h-48 overflow-y-auto space-y-1 p-1 shadow-xl animate-fade">
-                {searchResults.map(s => (
-                  <button
-                    key={s.id}
-                    onClick={() => handleSelectPreviewSong(s)}
-                    className="w-full p-2.5 rounded-xl text-left hover:bg-slate-800 flex items-center justify-between transition-colors"
-                  >
-                    <div className="min-w-0 pr-2">
-                      <div className="font-kannada font-bold text-xs text-white truncate">{s.titleKannada}</div>
-                      {s.titleEnglish && <div className="text-[10px] text-slate-400 truncate">{s.titleEnglish}</div>}
-                    </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800 shrink-0">
-                      Preview ↗
-                    </span>
-                  </button>
-                ))}
+            {/* Saved Worship Sets Picker */}
+            {savedWorshipSets.length > 0 && (
+              <div className="space-y-2 pt-2 border-t border-slate-800">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                  <ListMusic className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Saved Worship Sets</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {savedWorshipSets.map(set => (
+                    <button
+                      key={set.id}
+                      onClick={() => handleSelectWorshipSet(set)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-indigo-950 border border-slate-800 hover:border-indigo-700 text-xs font-bold text-slate-300 transition-colors"
+                    >
+                      🎵 {set.name}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
-          </div>
 
-          {/* Quick Worship Set Switcher */}
-          {savedWorshipSets.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
-                <ListMusic className="w-3.5 h-3.5 text-amber-400" />
-                <span>Worship Sets</span>
-              </div>
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-                {savedWorshipSets.map(set => (
-                  <button
-                    key={set.id}
-                    onClick={() => handleSelectWorshipSet(set)}
-                    className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500 text-xs font-bold text-slate-300 hover:text-white shrink-0 transition-all"
-                  >
-                    {set.name} ({set.songIds.length})
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Active Preview Song Stanza Thumbnails */}
-          <div className="flex-1 flex flex-col min-h-0 space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold border-b border-slate-800 pb-2">
-              <div className="min-w-0">
-                <span className="text-amber-400 uppercase tracking-wider block text-[10px]">PREVIEW SONG</span>
-                <span className="font-kannada text-sm text-white truncate block">
-                  {previewSong?.titleKannada || 'Current Presentation'}
+            {/* Active Preview Song Info & Stanza List */}
+            <div className="flex-1 flex flex-col min-h-0 space-y-3 pt-2 border-t border-slate-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-kannada font-bold text-sm text-amber-400">
+                    {previewSong?.titleKannada || 'No Song Loaded'}
+                  </h3>
+                  {previewSong?.titleEnglish && (
+                    <p className="text-[11px] text-slate-400 font-medium">{previewSong.titleEnglish}</p>
+                  )}
+                </div>
+                <span className="text-[10px] font-mono text-slate-500 bg-slate-950 px-2.5 py-1 rounded-full border border-slate-800">
+                  {previewSlides.length} Stanzas
                 </span>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">
-                {previewSlides.length} Stanzas
-              </span>
+
+              {/* Stanza Thumbnails Card Grid */}
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-0">
+                {previewSlides.map((slide, idx) => {
+                  const isSelected = idx === previewIndex;
+                  const isLiveOnProjector = liveState.displayMode === 'LIVE' && liveState.slideIndex === idx && liveState.activeSongTitleKn === previewSong?.titleKannada;
+
+                  return (
+                    <div
+                      key={slide.id + idx}
+                      onClick={() => {
+                        setPreviewIndex(idx);
+                        handleGoLive(idx);
+                      }}
+                      className={`p-3 rounded-2xl border transition-all cursor-pointer relative group ${
+                        isLiveOnProjector
+                          ? 'bg-emerald-950/60 border-emerald-500 ring-2 ring-emerald-500/50 shadow-md'
+                          : isSelected
+                          ? 'bg-indigo-950/50 border-indigo-500 ring-1 ring-indigo-500/40'
+                          : 'bg-slate-950 border-slate-800/80 hover:border-slate-700 hover:bg-slate-800/40'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <span className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                          slide.type === 'chorus' ? 'bg-amber-950 text-amber-400 border border-amber-800' : 'bg-slate-800 text-slate-300'
+                        }`}>
+                          {slide.title || `Stanza ${idx + 1}`}
+                        </span>
+
+                        <div className="flex items-center gap-1.5">
+                          {isLiveOnProjector && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-extrabold text-[10px] animate-pulse flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                              LIVE
+                            </span>
+                          )}
+                          {isSelected && !isLiveOnProjector && (
+                            <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/50 text-indigo-300 font-bold text-[10px]">
+                              PREVIEW
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="font-kannada text-xs text-slate-300 font-medium leading-relaxed line-clamp-3">
+                        {slide.text}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Thumbnails List */}
-            <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-              {previewSlides.map((s, idx) => {
-                const isCurrentlyLive = liveState.displayMode === 'LIVE' &&
-                  liveState.activeSongTitleKn === previewSong?.titleKannada &&
-                  liveState.slideIndex === idx;
-                const isCurrentPreview = idx === previewIndex;
+          </div>
 
-                return (
-                  <div
-                    key={s.id + idx}
-                    onClick={() => {
-                      setPreviewIndex(idx);
-                      handleGoLive(idx);
-                    }}
-                    className={`p-3 rounded-2xl border text-left cursor-pointer transition-all ${
-                      isCurrentlyLive
-                        ? 'bg-emerald-950/70 border-emerald-500 ring-2 ring-emerald-500/50 text-white shadow-lg'
-                        : isCurrentPreview
-                        ? 'bg-indigo-950/80 border-indigo-500 text-white'
-                        : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700 text-slate-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between text-[11px] font-bold mb-1">
-                      <span className="text-amber-400">{s.title || `Stanza ${idx + 1}`}</span>
-                      <div className="flex items-center gap-1.5">
-                        {isCurrentlyLive ? (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[9px] font-extrabold flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-pulse" />
-                            LIVE
-                          </span>
-                        ) : isCurrentPreview ? (
-                          <span className="px-2 py-0.5 rounded-full bg-indigo-900 text-indigo-300 border border-indigo-700 text-[9px] font-bold">
-                            PREVIEW
-                          </span>
-                        ) : null}
-                        <span className="font-mono text-slate-400">#{idx + 1}</span>
-                      </div>
-                    </div>
-                    <p className="font-kannada text-xs line-clamp-2 leading-relaxed text-slate-200">
-                      {s.text || '[ Blank Slide ]'}
+          {/* ---------------------------------------------------- */}
+          {/* RIGHT COLUMN: LIVE PROJECTOR CANVAS & AUDIENCE VIEW  */}
+          {/* ---------------------------------------------------- */}
+          <div className="lg:col-span-2 space-y-5 flex flex-col min-h-0">
+
+            {/* Main Congregation Projector View Sandbox */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 flex-1 flex flex-col min-h-0 shadow-xl">
+
+              <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                <span className="flex items-center gap-2 text-white">
+                  <Tv className="w-4 h-4 text-emerald-400" />
+                  <span>Audience Screen Monitor</span>
+                </span>
+                <span className="font-mono text-[10px] text-emerald-400 uppercase font-extrabold">
+                  {liveState.displayMode} MODE
+                </span>
+              </div>
+
+              {/* Simulated Projector Frame Screen */}
+              <div
+                className="flex-1 rounded-2xl relative overflow-hidden flex flex-col items-center justify-center p-6 min-h-[280px] border border-slate-800 shadow-inner select-none transition-all duration-300"
+                style={{
+                  background: liveState.displayMode === 'BLACKOUT'
+                    ? '#000000'
+                    : liveState.displayMode === 'LOGO'
+                    ? 'radial-gradient(circle at center, #1e1b4b 0%, #0f172a 60%, #020617 100%)'
+                    : liveState.theme.bgType === 'image' && liveState.theme.customBgImage
+                    ? `url(${liveState.theme.customBgImage}) center/cover no-repeat`
+                    : liveState.theme.background
+                }}
+              >
+                {liveState.displayMode === 'BLACKOUT' ? (
+                  <div className="text-slate-600 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
+                    <Square className="w-4 h-4 fill-current text-rose-500" />
+                    <span>Blackout Mode Active</span>
+                  </div>
+                ) : liveState.displayMode === 'LOGO' ? (
+                  <div className="flex flex-col items-center justify-center space-y-4 text-center animate-fade">
+                    <img
+                      src={CHURCH_LOGO_URL}
+                      alt="RCAG Worship Logo"
+                      className="w-20 h-20 object-contain drop-shadow-xl animate-pulse"
+                    />
+                    <h2 className="font-kannada font-bold text-2xl text-white">
+                      ಕನ್ನಡ ಕ್ರೈಸ್ತ ಆರಾಧನೆ
+                    </h2>
+                    <p className="text-amber-400 font-sans font-extrabold text-xs tracking-widest uppercase">
+                      RCAG Worship Presentation
                     </p>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-        </div>
-
-        {/* ---------------------------------------------------- */}
-        {/* RIGHT 2 COLUMNS: CURRENT LIVE vs PREVIEW PREVIEW CARDS */}
-        {/* ---------------------------------------------------- */}
-        <div className="lg:col-span-2 space-y-6 flex flex-col justify-between">
-
-          {/* Card 1: CONGREGATION LIVE DISPLAY CARD */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl relative overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-extrabold text-sm text-emerald-400 tracking-wider">
-                  LIVE ON PROJECTOR — CONGREGATION VIEW
-                </span>
-              </div>
-              <div className="text-xs font-mono text-slate-400">
-                Slide {liveState.slideIndex + 1} of {liveState.totalSlides}
-              </div>
-            </div>
-
-            {/* Simulated Audience Screen Box */}
-            <div
-              className="aspect-video bg-slate-950 rounded-2xl p-6 flex flex-col items-center justify-center text-center relative border border-slate-800 shadow-inner overflow-hidden"
-              style={{
-                background: liveState.theme.bgType === 'image' && liveState.theme.customBgImage
-                  ? `url(${liveState.theme.customBgImage}) center/cover no-repeat`
-                  : liveState.theme.background
-              }}
-            >
-              {liveState.displayMode === 'BLACKOUT' ? (
-                <div className="absolute inset-0 bg-black flex items-center justify-center text-rose-500 font-bold text-sm">
-                  [ ⬛ BLACKOUT ACTIVE ]
-                </div>
-              ) : liveState.displayMode === 'LOGO' ? (
-                <div className="flex flex-col items-center space-y-3 text-center text-white">
-                  <img src={CHURCH_LOGO_URL} alt="RCAG Worship Logo" className="w-16 h-16 object-contain drop-shadow-xl" />
-                  <div className="font-kannada font-bold text-lg">ಕನ್ನಡ ಕ್ರೈಸ್ತ ಆರಾಧನೆ</div>
-                  <div className="text-xs text-amber-400 font-bold uppercase tracking-widest">[ CHURCH LOGO IDLE ]</div>
-                </div>
-              ) : (
-                <div
-                  className="absolute z-10 space-y-3 w-4/5"
-                  style={{
-                    top: `${liveState.theme.verticalPositionPercent || 10}%`,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    textAlign: liveState.theme.alignment || 'center'
-                  }}
-                >
-                  {liveState.currentSlide.title && (
-                    <span
-                      className="inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border border-current"
-                      style={{ color: liveState.theme.accentColor, borderColor: liveState.theme.accentColor }}
-                    >
-                      {liveState.currentSlide.title}
-                    </span>
-                  )}
-                  {liveState.showChords && liveState.currentSlide.chords && (
-                    <div className="text-amber-400 font-mono text-xs font-bold">
-                      🎸 {liveState.currentSlide.chords}
-                    </div>
-                  )}
-                  <div
-                    className="font-kannada font-bold text-lg md:text-xl leading-relaxed whitespace-pre-line drop-shadow-md"
-                    style={{
-                      color: liveState.theme.textColor,
-                      lineHeight: liveState.theme.lineHeight || 1.4
-                    }}
-                  >
-                    {liveState.currentSlide.text || '[ Blank Slide ]'}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Card 2: OPERATOR PREVIEW & UPCOMING STAGE CARD */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-indigo-400" />
-                <span className="font-bold text-sm text-indigo-300 tracking-wider">
-                  OPERATOR PREVIEW — PREPARING NEXT
-                </span>
-              </div>
-              <button
-                onClick={() => handleGoLive()}
-                className="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-md transition-colors"
-              >
-                PUSH TO LIVE →
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-
-              {/* Active Preview Stanza */}
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
-                <div className="flex items-center justify-between text-[11px] font-bold text-amber-400">
-                  <span>SELECTED PREVIEW ({previewIndex + 1})</span>
-                  <span>{previewCurrentSlide.title}</span>
-                </div>
-                <div className="font-kannada font-bold text-sm text-white leading-relaxed whitespace-pre-line line-clamp-4">
-                  {previewCurrentSlide.text || '[ Blank Stanza ]'}
-                </div>
-              </div>
-
-              {/* Upcoming Next Stanza */}
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 opacity-80">
-                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400">
-                  <span>UPCOMING NEXT ({previewIndex + 2})</span>
-                  <span>{previewNextSlide?.title}</span>
-                </div>
-                {previewNextSlide ? (
-                  <div className="font-kannada text-xs text-slate-300 leading-relaxed whitespace-pre-line line-clamp-4">
-                    {previewNextSlide.text}
-                  </div>
                 ) : (
-                  <div className="text-xs text-slate-500 italic py-4">End of Song / Worship Set</div>
+                  <div className="w-full space-y-4 text-center animate-fade max-w-xl">
+                    {liveState.currentSlide.title && (
+                      <div
+                        className="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border"
+                        style={{
+                          color: liveState.theme.accentColor,
+                          borderColor: liveState.theme.accentColor
+                        }}
+                      >
+                        {liveState.currentSlide.title}
+                      </div>
+                    )}
+                    <div
+                      className="font-kannada font-bold leading-relaxed drop-shadow-md whitespace-pre-line"
+                      style={{
+                        color: liveState.theme.textColor,
+                        fontSize: `${Math.min(32, (liveState.theme.fontSizePx || 54) * 0.55)}px`
+                      }}
+                    >
+                      {liveState.currentSlide.text}
+                    </div>
+                  </div>
                 )}
               </div>
 
             </div>
+
+            {/* Next Stanza Preview Monitor Box */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Up Next Stanza Preview</span>
+                </span>
+                <span className="text-[10px] text-indigo-400 font-mono">
+                  {previewNextSlide?.title || 'End of Stanzas'}
+                </span>
+              </div>
+              {previewNextSlide ? (
+                <div className="font-kannada text-xs text-slate-300 leading-relaxed whitespace-pre-line line-clamp-3 bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                  {previewNextSlide.text}
+                </div>
+              ) : (
+                <div className="text-xs text-slate-500 italic py-2 text-center bg-slate-950 rounded-2xl border border-slate-800">
+                  End of current song stanzas
+                </div>
+              )}
+            </div>
+
           </div>
 
-        </div>
-
-      </main>
+        </main>
 
       {/* ==================================================== */}
       {/* 4. MODALS & PRESENTER OVERLAYS */}
@@ -1132,6 +1148,43 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
                 <span>Thumbnails</span>
                 <kbd className="px-2 py-0.5 rounded bg-slate-800 text-amber-400 font-mono">T</kbd>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* End Worship Confirmation Modal */}
+      {showEndWorshipModal && (
+        <div className="fixed inset-0 z-[100000] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade">
+          <div className="bg-slate-900 border border-purple-500/50 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 text-center">
+            <div className="w-16 h-16 rounded-full bg-purple-950/80 border border-purple-500/50 text-amber-400 flex items-center justify-center mx-auto shadow-lg">
+              <Sparkles className="w-8 h-8 animate-pulse" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-white tracking-wide">
+                Worship Presentation Completed
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed font-medium">
+                The worship presentation is complete. Would you like to launch <strong>Preaching Notes Mode</strong> for pastor's sermon notes?
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setShowEndWorshipModal(false)}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-colors border border-slate-700"
+              >
+                Return to Presentation
+              </button>
+
+              <button
+                onClick={handleStartPreachingNotes}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white font-extrabold text-xs shadow-lg transition-all border border-purple-400/40 flex items-center justify-center gap-2"
+              >
+                <FileText className="w-4 h-4 text-amber-300" />
+                <span>Start Preaching Notes</span>
+              </button>
             </div>
           </div>
         </div>

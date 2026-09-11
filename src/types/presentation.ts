@@ -1,6 +1,6 @@
-export type SlideType = 'title' | 'lyrics' | 'chorus' | 'blank' | 'scripture' | 'announcement';
+export type SlideType = 'title' | 'lyrics' | 'chorus' | 'blank' | 'scripture' | 'announcement' | 'notes';
 
-export type DisplayMode = 'LIVE' | 'BLACKOUT' | 'LOGO';
+export type DisplayMode = 'LIVE' | 'BLACKOUT' | 'LOGO' | 'NOTES';
 
 export interface PresentationSlide {
   id: string;
@@ -60,6 +60,10 @@ export type PresentationMessageType =
   | 'BLACKOUT_TOGGLE'
   | 'LOGO_TOGGLE'
   | 'PRESENTATION_STOP'
+  | 'NOTES_MODE_START'
+  | 'NOTES_MODE_END'
+  | 'NOTES_LIVE'
+  | 'NOTES_CLEAR'
   | 'PING'
   | 'PONG';
 

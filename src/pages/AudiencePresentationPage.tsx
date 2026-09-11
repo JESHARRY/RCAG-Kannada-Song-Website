@@ -27,13 +27,20 @@ export const AudiencePresentationPage: React.FC = () => {
         return;
       }
 
-      if (msg.type === 'CURRENT_LIVE_STATE' || msg.type === 'GO_LIVE' || msg.type === 'LIVE_STATE_UPDATE') {
+      if (msg.type === 'CURRENT_LIVE_STATE' || msg.type === 'GO_LIVE' || msg.type === 'LIVE_STATE_UPDATE' || msg.type === 'NOTES_LIVE' || msg.type === 'NOTES_CLEAR' || msg.type === 'BLACKOUT_TOGGLE' || msg.type === 'LOGO_TOGGLE') {
         if (msg.payload) {
           setLiveState(msg.payload);
+          try {
+            localStorage.setItem('kcs_active_live_state', JSON.stringify(msg.payload));
+          } catch {}
+        } else if (msg.type === 'BLACKOUT_TOGGLE') {
+          setLiveState(prev => prev ? { ...prev, displayMode: 'BLACKOUT' } : null);
+        } else if (msg.type === 'LOGO_TOGGLE') {
+          setLiveState(prev => prev ? { ...prev, displayMode: 'LOGO' } : null);
         }
-      } else if (msg.type === 'BLACKOUT_TOGGLE') {
-        setLiveState(prev => prev ? { ...prev, displayMode: 'BLACKOUT' } : null);
-      } else if (msg.type === 'LOGO_TOGGLE' || msg.type === 'PRESENTATION_STOP') {
+      } else if (msg.type === 'NOTES_MODE_START') {
+        setLiveState(prev => prev ? { ...prev, displayMode: 'NOTES' } : null);
+      } else if (msg.type === 'NOTES_MODE_END' || msg.type === 'PRESENTATION_STOP') {
         setLiveState(prev => prev ? { ...prev, displayMode: 'LOGO' } : null);
       }
     };
@@ -142,7 +149,93 @@ export const AudiencePresentationPage: React.FC = () => {
     );
   }
 
-  // 3. LIVE PRESENTATION MODE (Top-Center Layout)
+  // 3. PREACHING NOTES DISPLAY MODE (Strict Top-Center Layout)
+  if (displayMode === 'NOTES' || currentSlide?.type === 'notes') {
+    const isNotesCleared = !currentSlide || currentSlide.id === 'clear-notes' || !currentSlide.text?.trim();
+
+    return (
+      <div
+        onDoubleClick={handleDoubleClick}
+        className="fixed inset-0 z-[99999] bg-black w-screen h-screen overflow-hidden select-none cursor-none"
+        style={{
+          background: theme.bgType === 'image' && theme.customBgImage
+            ? `url(${theme.customBgImage}) center/cover no-repeat`
+            : theme.background
+        }}
+      >
+        {/* Background Overlay */}
+        {theme.overlayOpacity > 0 && (
+          <div
+            className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+            style={{
+              backgroundColor: '#000000',
+              opacity: theme.overlayOpacity,
+              filter: theme.blur ? `blur(${theme.blur}px)` : 'none'
+            }}
+          />
+        )}
+
+        {/* Top Header Bar */}
+        <div className="absolute top-6 left-8 right-8 z-20 flex items-center justify-between opacity-70 text-xs md:text-sm font-bold uppercase tracking-widest text-slate-400 pointer-events-none">
+          <div>
+            <span className="font-sans text-purple-400 font-extrabold text-sm md:text-base mr-3 tracking-wider">
+              📜 PREACHING NOTES
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse" />
+            <span className="text-purple-400 font-extrabold text-xs">LIVE</span>
+          </div>
+        </div>
+
+        {/* Main Notes Canvas: Positioned strictly TOP-CENTER (top: clamp(32px, 5vh, 96px), left: 50%) */}
+        {!isNotesCleared && currentSlide && (
+          <div
+            className="absolute z-10 space-y-6 animate-fade"
+            style={{
+              top: 'clamp(32px, 5vh, 96px)',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 'clamp(300px, 88vw, 1400px)',
+              textAlign: theme.alignment || 'center'
+            }}
+          >
+            {/* Optional Slide Title */}
+            {currentSlide.title && currentSlide.title.trim() !== '' && (
+              <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full font-bold text-sm md:text-base uppercase tracking-widest bg-purple-950/60 border border-purple-500/50 text-amber-300 backdrop-blur-md shadow-lg">
+                {currentSlide.title}
+              </div>
+            )}
+
+            {/* Note Content Body */}
+            <div
+              className="font-bold whitespace-pre-line tracking-wide drop-shadow-2xl font-kannada"
+              style={{
+                color: theme.textColor || '#ffffff',
+                fontSize: `${fontSizePx}px`,
+                lineHeight: lineHeightVal || 1.4
+              }}
+            >
+              {currentSlide.text}
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Footer Bar */}
+        <div className="absolute bottom-6 left-8 right-8 z-20 flex items-center justify-between text-xs font-bold text-slate-400 opacity-60 pointer-events-none">
+          <span>RCAG Preaching Notes</span>
+          {liveState && liveState.totalSlides > 0 && !isNotesCleared && (
+            <span>
+              Slide <span className="font-mono text-purple-400 font-extrabold">{liveState.slideIndex + 1}</span> of <span className="font-mono">{liveState.totalSlides}</span>
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // 4. LIVE PRESENTATION MODE (Top-Center Layout for Lyrics)
   return (
     <div
       onDoubleClick={handleDoubleClick}

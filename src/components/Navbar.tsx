@@ -14,7 +14,8 @@ import {
   Grid,
   Guitar,
   Folder,
-  Upload
+  Upload,
+  Mic
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { CHURCH_LOGO_URL } from '../utils/assetPath';
@@ -304,6 +305,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <ListMusic className="w-4 h-4 text-indigo-400" />
                 <span>Worship Sets</span>
+              </button>
+
+              <button
+                onClick={() => handleNavClick('/preaching-notes')}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-colors ${
+                  isLinkActive('/preaching-notes') ? 'bg-purple-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <Mic className="w-4 h-4 text-purple-400" />
+                <span>Preaching Notes</span>
               </button>
             </div>
 

@@ -45,12 +45,12 @@ export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate }) =>
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+    <div className="max-w-5xl mx-auto space-y-6 pb-12 anim-page-entrance">
       <div>
-        <h1 className="font-bold text-2xl sm:text-3xl text-slate-900 dark:text-white mb-2">
+        <h1 className="font-bold text-2xl sm:text-3xl text-white mb-2">
           📁 Categories
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-slate-400">
           Browse songs organized by chords, audio features, and custom imports
         </p>
       </div>
@@ -60,7 +60,7 @@ export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate }) =>
           <div
             key={cat.id}
             onClick={() => onNavigate(cat.path)}
-            className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 hover:border-indigo-500 transition-all cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between"
+            className="group heavenly-card bg-church-surface border border-church-border rounded-xl p-6 hover:border-amber-500/50 transition-all cursor-pointer shadow-sm flex flex-col justify-between"
           >
             <div>
               <div className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${cat.color} text-white flex items-center justify-center font-bold text-xl mb-4 shadow-md`}>

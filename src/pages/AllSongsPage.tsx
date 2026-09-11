@@ -28,65 +28,60 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
   }, [allSongs, query, alphabet, category]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16 font-sans">
+    <div className="space-y-5 max-w-7xl mx-auto pb-16 font-sans anim-page-entrance">
 
-      {/* 1. Dynamic-Island-Style Header Search Bar (All Songs Page ONLY) */}
-      <div className="pt-2 pb-2">
-        <div
-          className={`mx-auto max-w-4xl rounded-full bg-slate-900/90 backdrop-blur-xl border border-slate-700/80 shadow-2xl p-2 sm:p-2.5 flex items-center gap-3 transition-all duration-300 ${
+      {/* 1. Clean Search & Action Header */}
+      <div className="bg-church-surface border border-church-border rounded-xl p-3 sm:p-4 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          
+          {/* Search Input */}
+          <div className={`flex-1 w-full relative rounded-lg bg-[#0d0f14] border transition-all duration-200 ${
             isFocused
-              ? 'border-amber-400/90 ring-4 ring-amber-400/20 scale-[1.005] shadow-amber-500/10'
-              : 'hover:border-slate-600'
-          }`}
-        >
-          {/* Search Icon */}
-          <div className="pl-3 text-amber-400 shrink-0">
-            <Search className="w-5 h-5" />
+              ? 'border-amber-500 ring-2 ring-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
+              : 'border-slate-800 hover:border-slate-700'
+          }`}>
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400" />
+            <input
+              type="text"
+              value={query}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search Kannada title, English, lyrics, or song number..."
+              className="w-full pl-10 pr-9 py-2.5 bg-transparent text-white placeholder-slate-500 text-xs sm:text-sm font-medium focus:outline-none"
+              aria-label="Search songs"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white rounded-md transition-colors"
+                title="Clear search"
+                aria-label="Clear search query"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
-          {/* Search Input */}
-          <input
-            type="text"
-            value={query}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search Kannada, English, lyrics, or song number..."
-            className="flex-1 bg-transparent text-white placeholder-slate-400 text-sm font-medium focus:outline-none"
-            aria-label="Search songs"
-          />
-
-          {/* Clear query button */}
-          {query && (
-            <button
-              onClick={() => setQuery('')}
-              className="p-1 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-colors"
-              title="Clear search"
-              aria-label="Clear search query"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-
-          {/* Integrated + Add Song Button inside the Dynamic Island Header */}
+          {/* Add Song Button */}
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-extrabold text-xs shadow-md hover:scale-105 active:scale-95 transition-all shrink-0"
+            className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shrink-0 shadow-xs"
           >
             <PlusCircle className="w-4 h-4 text-slate-950" />
-            <span>+ Add Song</span>
+            <span>Add Custom Song</span>
           </button>
         </div>
       </div>
 
       {/* 2. Category Pills & Count Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
           <button
             onClick={() => setCategory('all')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               category === 'all'
-                ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md border border-indigo-500'
+                ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
                 : 'bg-slate-900 border border-slate-800 text-slate-300 hover:text-white'
             }`}
           >
@@ -95,9 +90,9 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
 
           <button
             onClick={() => setCategory('chords')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               category === 'chords'
-                ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md border border-indigo-500'
+                ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
                 : 'bg-slate-900 border border-slate-800 text-slate-300 hover:text-white'
             }`}
           >
@@ -107,25 +102,25 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
           {userCreatedSongs.length > 0 && (
             <button
               onClick={() => setCategory('user_created')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
                 category === 'user_created'
-                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md border border-amber-400'
+                  ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
                   : 'bg-slate-900 border border-slate-800 text-amber-400 hover:border-amber-500/50'
               }`}
             >
-              ✨ Custom Created ({userCreatedSongs.length})
+              Custom Songs ({userCreatedSongs.length})
             </button>
           )}
         </div>
 
-        <div className="text-xs font-bold text-slate-400">
+        <div className="text-xs font-semibold text-slate-400">
           {query || alphabet ? (
             <span>
-              Showing <span className="font-mono text-amber-400 font-extrabold">{filtered.length}</span> matching songs for <strong className="text-white">"{query || alphabet}"</strong>
+              Showing <span className="font-mono text-amber-400 font-bold">{filtered.length}</span> matching songs for <strong className="text-white">"{query || alphabet}"</strong>
             </span>
           ) : (
             <span>
-              Showing <span className="font-mono text-amber-400 font-extrabold">{filtered.length}</span> of <span className="font-mono">{allSongs.length}</span> songs
+              Showing <span className="font-mono text-amber-400 font-bold">{filtered.length}</span> of <span className="font-mono">{allSongs.length}</span> songs
             </span>
           )}
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star } from 'lucide-react';
+import { Star, Music } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { SongCard } from '../components/SongCard';
 
@@ -13,29 +13,32 @@ export const FavoritesPage: React.FC<FavoritesPageProps> = ({ onNavigate }) => {
   const favSongs = allSongs.filter(s => favorites.includes(s.id));
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-12">
+    <div className="max-w-7xl mx-auto space-y-6 pb-12 font-sans anim-page-entrance">
       <div>
-        <h1 className="font-bold text-2xl sm:text-3xl text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-          <Star className="w-7 h-7 text-amber-400 fill-amber-400" />
-          <span>Your Favorite Songs</span>
+        <h1 className="font-bold text-2xl text-white mb-1 flex items-center gap-2">
+          <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
+          <span>Favorite Songs</span>
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Showing <strong>{favSongs.length}</strong> saved favorite songs
+        <p className="text-xs text-slate-400">
+          Showing <span className="font-mono text-amber-400 font-bold">{favSongs.length}</span> saved favorite songs
         </p>
       </div>
 
       {favSongs.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center max-w-md mx-auto">
-          <div className="text-5xl mb-4">⭐</div>
-          <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">No Favorites Saved Yet</h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
-            Click the star icon on any song card or detail page to add it to your favorites list for quick access.
+        <div className="bg-church-surface border border-church-border rounded-xl p-10 text-center max-w-md mx-auto space-y-3 shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-slate-900 text-amber-400 flex items-center justify-center mx-auto border border-slate-800">
+            <Star className="w-6 h-6" />
+          </div>
+          <h3 className="font-bold text-base text-white">No favorite songs yet</h3>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Save songs here for quick access during worship services and practice sessions.
           </p>
           <button
             onClick={() => onNavigate('/songs')}
-            className="px-6 py-2.5 rounded-full bg-indigo-600 text-white font-semibold text-sm shadow-md hover:bg-indigo-700 transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors mx-auto"
           >
-            Browse All Songs
+            <Music className="w-4 h-4 text-slate-950" />
+            <span>Browse Songs Library</span>
           </button>
         </div>
       ) : (

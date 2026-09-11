@@ -1,5 +1,5 @@
-import React from 'react';
-import { Star, Guitar, Headphones, FileText, Tv, Trash2, UserCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, Guitar, Headphones, FileText, Tv, Trash2, UserCheck, ChevronRight } from 'lucide-react';
 import { Song } from '../types/song';
 import { useApp } from '../context/AppContext';
 import { getSongNumber, formatSongNumber } from '../utils/searchEngine';
@@ -13,6 +13,7 @@ interface SongCardProps {
 export const SongCard: React.FC<SongCardProps> = ({ song, index, onNavigate }) => {
   const { isFavorite, toggleFavorite, deleteUserSong } = useApp();
   const fav = isFavorite(song.id);
+  const [isStarAnimating, setIsStarAnimating] = useState(false);
 
   // Compute stable 3-digit padded display song number
   const numVal = getSongNumber(song, index);
@@ -25,38 +26,46 @@ export const SongCard: React.FC<SongCardProps> = ({ song, index, onNavigate }) =
     }
   };
 
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsStarAnimating(true);
+    toggleFavorite(song.id);
+    setTimeout(() => setIsStarAnimating(false), 350);
+  };
+
   return (
     <div
       onClick={() => onNavigate(`/song/${song.id}`)}
-      className="group relative bg-slate-900/90 border border-slate-800/90 rounded-3xl p-5 hover:border-indigo-500/60 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden"
+      className="group heavenly-card bg-church-surface border border-church-border rounded-xl p-4.5 sm:p-5 hover:bg-[#1c202c] cursor-pointer flex flex-col justify-between shadow-sm relative overflow-hidden transition-all duration-300"
     >
-      {/* Background Accent Subtle Radial Glow */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-600/5 rounded-full blur-2xl pointer-events-none group-hover:bg-indigo-600/10 transition-colors" />
+      {/* Light Sweep Shimmer Accent (Moves smoothly on hover) */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
 
       <div>
-        {/* Top Header Row: Prominent Song Number & Quick Action Buttons */}
-        <div className="flex items-center justify-between gap-2 mb-3.5">
+        {/* Top Header Row: Song Number Badge & Quick Actions */}
+        <div className="flex items-center justify-between gap-2 mb-3 relative z-10">
 
-          {/* Prominent Stable 3-Digit Song Number Badge */}
+          {/* Song Number Badge */}
           <div className="flex items-center gap-2">
-            <span className="font-mono font-extrabold text-sm px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-amber-400 shadow-inner tracking-wider">
-              {displayNumber}
+            <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-md bg-[#0d0f14] border border-slate-800 text-amber-400 tracking-wide group-hover:border-amber-500/40 group-hover:text-amber-300 transition-colors">
+              #{displayNumber}
             </span>
 
             {song.sourceType === 'user_created' && (
-              <span className="inline-flex items-center gap-1 text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-amber-950/80 text-amber-300 border border-amber-700/60 uppercase">
+              <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-950/80 text-amber-300 border border-amber-700/60 uppercase">
                 <UserCheck className="w-3 h-3 text-amber-400" /> Custom
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-1">
-            {/* Delete button for user-created songs only */}
+          {/* Action Triggers */}
+          <div className="flex items-center gap-0.5">
+            {/* Delete button for user-created songs */}
             {song.sourceType === 'user_created' && (
               <button
                 onClick={handleDeleteCustom}
-                title="Delete User Created Song"
-                className="p-1.5 rounded-full text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors"
+                title="Delete Custom Song"
+                className="p-1.5 rounded-md text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -69,59 +78,57 @@ export const SongCard: React.FC<SongCardProps> = ({ song, index, onNavigate }) =
                 onNavigate(`/presentation/song/${song.id}`);
               }}
               title="Present Lyrics (Tv)"
-              className="p-1.5 rounded-full text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-colors"
+              className="p-1.5 rounded-md text-slate-400 hover:text-amber-400 hover:bg-amber-950/40 hover:border hover:border-amber-500/30 transition-all"
             >
               <Tv className="w-4 h-4" />
             </button>
 
             {/* Favorite Star Trigger */}
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFavorite(song.id);
-              }}
-              className={`p-1.5 rounded-full transition-colors ${
+              onClick={handleFavoriteClick}
+              className={`p-1.5 rounded-md transition-all ${
                 fav
-                  ? 'text-amber-400 bg-amber-950/40'
-                  : 'text-slate-500 hover:text-amber-400'
+                  ? 'text-amber-400 bg-amber-950/50 border border-amber-500/40'
+                  : 'text-slate-500 hover:text-amber-400 hover:bg-slate-800'
               }`}
               aria-label="Toggle Favorite"
             >
-              <Star className={`w-4 h-4 ${fav ? 'fill-amber-400 text-amber-400' : ''}`} />
+              <Star className={`w-4 h-4 ${fav ? 'fill-amber-400 text-amber-400' : ''} ${isStarAnimating ? 'animate-star-pop' : ''}`} />
             </button>
           </div>
         </div>
 
         {/* Kannada Title */}
-        <h3 className="font-kannada font-bold text-lg sm:text-xl text-white leading-snug group-hover:text-amber-300 transition-colors mb-1">
-          {song.titleKannada}
+        <h3 className="font-kannada font-bold text-lg text-white leading-snug group-hover:text-amber-300 transition-colors mb-1 relative z-10 flex items-center justify-between gap-2">
+          <span>{song.titleKannada}</span>
+          <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-amber-400 group-hover:translate-x-1 transition-all shrink-0 opacity-0 group-hover:opacity-100" />
         </h3>
 
         {/* English Title / Transliteration */}
         {song.titleEnglish && (
-          <p className="text-xs text-slate-400 line-clamp-1 mb-4 font-medium tracking-wide">
+          <p className="text-xs text-slate-400 line-clamp-1 mb-4 font-normal tracking-wide relative z-10">
             {song.titleEnglish}
           </p>
         )}
       </div>
 
       {/* Badges Footer */}
-      <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-800/80 mt-auto text-[10px] font-bold">
+      <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-800/80 mt-auto text-[10px] font-semibold relative z-10">
         {song.key && (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-950/80 text-indigo-300 border border-indigo-800/60">
-            <Guitar className="w-3 h-3 text-indigo-400" /> Key: {song.key}
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-900 text-amber-300 border border-slate-800 group-hover:border-amber-500/30 transition-colors">
+            <Guitar className="w-3 h-3 text-amber-400" /> Key: {song.key}
           </span>
         )}
 
         {song.hasAudio && (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-950/80 text-cyan-300 border border-cyan-800/60">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-900 text-cyan-300 border border-slate-800 group-hover:border-cyan-500/30 transition-colors">
             <Headphones className="w-3 h-3 text-cyan-400" /> Audio
           </span>
         )}
 
         {song.sourceType === 'pdf' && (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
-            <FileText className="w-3 h-3 text-emerald-400" /> PDF: p.{song.sourcePageStart}
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-900 text-emerald-300 border border-slate-800 group-hover:border-emerald-500/30 transition-colors">
+            <FileText className="w-3 h-3 text-emerald-400" /> PDF p.{song.sourcePageStart}
           </span>
         )}
       </div>

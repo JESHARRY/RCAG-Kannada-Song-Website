@@ -146,11 +146,12 @@ export const WorshipSetsPage: React.FC<WorshipSetsPageProps> = ({
   ).slice(0, 10);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-20">
+    <div className="max-w-7xl mx-auto space-y-6 pb-20 anim-page-entrance">
       
       {/* Page Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-8 rounded-3xl text-white shadow-xl">
-        <div className="space-y-1">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-church-surface border border-church-border/80 p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
+        <div className="space-y-1 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 text-xs font-semibold border border-amber-400/20">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Multi-Song Worship Projection</span>

@@ -50,8 +50,16 @@ export class PresentationChannel {
       timestamp: Date.now()
     };
 
-    // Save liveState to localStorage for Operator Reload Recovery
-    if (payload && (type === 'GO_LIVE' || type === 'LIVE_STATE_UPDATE' || type === 'CURRENT_LIVE_STATE')) {
+    // Save liveState to localStorage for Operator Reload Recovery & Audience Sync
+    if (payload && (
+      type === 'GO_LIVE' ||
+      type === 'LIVE_STATE_UPDATE' ||
+      type === 'CURRENT_LIVE_STATE' ||
+      type === 'NOTES_LIVE' ||
+      type === 'NOTES_CLEAR' ||
+      type === 'BLACKOUT_TOGGLE' ||
+      type === 'LOGO_TOGGLE'
+    )) {
       try {
         localStorage.setItem(LOCAL_STORAGE_LIVE_STATE_KEY, JSON.stringify(payload));
       } catch (e) {

@@ -11,14 +11,14 @@ import {
   Tv,
   AlertTriangle,
   FileText,
-  X,
   ExternalLink,
-  Minus,
   Type,
-  Maximize2
+  Palette,
+  Sliders,
+  Check
 } from 'lucide-react';
-import { PresentationSlide, LiveState, PRESET_THEMES, DisplayMode } from '../types/presentation';
-import { PresentationChannel } from '../services/presentationChannel';
+import { PresentationSlide, LiveState, PRESET_THEMES, DisplayMode, PresentationMessage, PresentationTheme } from '../types/presentation';
+import { PresentationChannel, openProjectorWindow, LOCAL_STORAGE_LIVE_STATE_KEY } from '../services/presentationChannel';
 import { CHURCH_LOGO_URL } from '../utils/assetPath';
 
 interface PreachingNotesPageProps {
@@ -29,6 +29,11 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
   // Session ID for preaching notes session
   const [sessionId] = useState<string>(() => `notes-session-${Date.now()}`);
   const channelRef = useRef<PresentationChannel | null>(null);
+
+  // Connection & Handshake State
+  const [isProjectorConnected, setIsProjectorConnected] = useState<boolean>(false);
+  const lastPongTime = useRef<number>(0);
+  const heartbeatTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Preaching Note Slides State (loaded from localStorage for refresh recovery)
   const [noteSlides, setNoteSlides] = useState<PresentationSlide[]>(() => {
@@ -57,21 +62,96 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
   const [showExitModal, setShowExitModal] = useState<boolean>(false);
   const [popupBlocked, setPopupBlocked] = useState<boolean>(false);
 
-  // Active theme
-  const [activeTheme] = useState(PRESET_THEMES[0]);
+  // Active preaching theme & overlay opacity state
+  const [activeTheme, setActiveTheme] = useState<PresentationTheme>(() => PRESET_THEMES.find(t => t.id === 'preaching') || PRESET_THEMES[0]);
+  const [overlayOpacity, setOverlayOpacity] = useState<number>(() => activeTheme.overlayOpacity || 0.20);
 
-  // Initialize BroadcastChannel on mount
+  // Ref tracking current liveState payload to answer REQUEST_LIVE_STATE requests from projector
+  const currentLiveStateRef = useRef<LiveState | null>(null);
+
+  // Helper to construct current live state payload
+  const buildLivePayload = (
+    mode: DisplayMode,
+    slide?: PresentationSlide,
+    overrideSlideIndex?: number,
+    fontSizeOverride?: number,
+    themeOverride?: PresentationTheme,
+    opacityOverride?: number
+  ): LiveState => {
+    const currentSlidePayload = slide || (liveNoteId ? noteSlides.find(s => s.id === liveNoteId) : undefined) || {
+      id: 'clear-notes',
+      type: 'notes',
+      title: '',
+      text: ''
+    };
+
+    const sIndex = overrideSlideIndex !== undefined
+      ? overrideSlideIndex
+      : (liveNoteId ? noteSlides.findIndex(s => s.id === liveNoteId) : 0);
+
+    const fSize = fontSizeOverride !== undefined ? fontSizeOverride : liveFontSizePx;
+    const targetTheme = themeOverride || activeTheme;
+    const targetOpacity = opacityOverride !== undefined ? opacityOverride : overlayOpacity;
+
+    return {
+      sessionId,
+      senderId: channelRef.current?.windowId || 'op-notes',
+      displayMode: mode,
+      currentSlide: currentSlidePayload,
+      slideIndex: Math.max(0, sIndex),
+      totalSlides: noteSlides.length,
+      activeSongTitleKn: 'ಪೂಜನ ಸಂದೇಶಗಳು',
+      activeSongTitleEn: 'Preaching Notes',
+      theme: {
+        ...targetTheme,
+        overlayOpacity: targetOpacity,
+        fontSizePx: fSize
+      },
+      showChords: false,
+      timestamp: Date.now()
+    };
+  };
+
+  // ----------------------------------------------------
+  // BROADCAST CHANNEL & HANDSHAKE INITIALIZATION
+  // ----------------------------------------------------
   useEffect(() => {
-    const channel = new PresentationChannel('operator');
+    const handleMessage = (msg: PresentationMessage) => {
+      console.log('[PREACHING NOTES] Received BroadcastChannel message:', msg.type, msg);
+
+      if (msg.type === 'PONG') {
+        // Audience window responded to PING
+        lastPongTime.current = Date.now();
+        setIsProjectorConnected(true);
+      } else if (msg.type === 'REQUEST_LIVE_STATE') {
+        // Audience window requested state on load/reload
+        const stateToSend = currentLiveStateRef.current || buildLivePayload(liveDisplayMode);
+        console.log('[PREACHING NOTES] Responding to REQUEST_LIVE_STATE with:', stateToSend);
+        channelRef.current?.post('CURRENT_LIVE_STATE', stateToSend, sessionId);
+      }
+    };
+
+    // Initialize Operator BroadcastChannel
+    const channel = new PresentationChannel('operator', handleMessage);
     channelRef.current = channel;
 
-    // Send initial ping
+    // Send initial handshake ping
     channel.post('PING', undefined, sessionId);
+    channel.post('REQUEST_LIVE_STATE');
+
+    // Heartbeat PING loop every 2 seconds
+    heartbeatTimer.current = setInterval(() => {
+      channel.post('PING', undefined, sessionId);
+      if (Date.now() - lastPongTime.current > 4500) {
+        setIsProjectorConnected(false);
+      }
+    }, 2000);
 
     return () => {
+      if (heartbeatTimer.current) clearInterval(heartbeatTimer.current);
       channel.close();
     };
-  }, [sessionId]);
+  }, [sessionId, liveDisplayMode, activeTheme, overlayOpacity]);
 
   // Persist preaching notes to localStorage
   useEffect(() => {
@@ -80,10 +160,9 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
     } catch {}
   }, [noteSlides]);
 
-  // Global Keyboard Shortcuts (B = Blackout, L = Logo, Left/Right = Live Step when not focused in input)
+  // Global Keyboard Shortcuts (B = Blackout, L = Logo when not focused in text inputs)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is currently typing inside an input or textarea
       const targetTag = (e.target as HTMLElement)?.tagName;
       if (targetTag === 'INPUT' || targetTag === 'TEXTAREA') return;
 
@@ -99,58 +178,36 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [liveNoteId, activeNoteIndex, noteSlides, liveDisplayMode, liveFontSizePx]);
+  }, [liveNoteId, activeNoteIndex, noteSlides, liveDisplayMode, liveFontSizePx, activeTheme, overlayOpacity]);
 
   // Helper to publish live state over BroadcastChannel & localStorage
   const publishLiveState = (
     mode: DisplayMode,
     slide?: PresentationSlide,
     overrideSlideIndex?: number,
-    fontSizeOverride?: number
+    fontSizeOverride?: number,
+    themeOverride?: PresentationTheme,
+    opacityOverride?: number
   ) => {
-    const currentSlidePayload = slide || (liveNoteId ? noteSlides.find(s => s.id === liveNoteId) : undefined) || {
-      id: 'clear-notes',
-      type: 'notes',
-      title: '',
-      text: ''
-    };
-
-    const sIndex = overrideSlideIndex !== undefined
-      ? overrideSlideIndex
-      : (liveNoteId ? noteSlides.findIndex(s => s.id === liveNoteId) : 0);
-
-    const fSize = fontSizeOverride !== undefined ? fontSizeOverride : liveFontSizePx;
-
-    const payload: LiveState = {
-      sessionId,
-      senderId: channelRef.current?.windowId || 'op-notes',
-      displayMode: mode,
-      currentSlide: currentSlidePayload,
-      slideIndex: Math.max(0, sIndex),
-      totalSlides: noteSlides.length,
-      activeSongTitleKn: 'ಪೂಜನ ಸಂದೇಶಗಳು',
-      activeSongTitleEn: 'Preaching Notes',
-      theme: {
-        ...activeTheme,
-        fontSizePx: fSize
-      },
-      showChords: false,
-      timestamp: Date.now()
-    };
-
+    const payload = buildLivePayload(mode, slide, overrideSlideIndex, fontSizeOverride, themeOverride, opacityOverride);
+    currentLiveStateRef.current = payload;
     setLiveDisplayMode(mode);
 
-    // Save active live state to localStorage for popups & audience sync
-    try {
-      localStorage.setItem('kcs_active_live_state', JSON.stringify(payload));
-    } catch {}
+    console.log('[PREACHING NOTES] Sending LIVE to BroadcastChannel:', mode, payload);
 
-    // Transmit over BroadcastChannel
+    // Save active live state to localStorage for popup recovery & audience sync
+    try {
+      localStorage.setItem(LOCAL_STORAGE_LIVE_STATE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      console.warn('Failed to write live state to localStorage', e);
+    }
+
+    // Transmit message over BroadcastChannel
     if (mode === 'BLACKOUT') {
       channelRef.current?.post('BLACKOUT_TOGGLE', payload, sessionId);
     } else if (mode === 'LOGO') {
       channelRef.current?.post('LOGO_TOGGLE', payload, sessionId);
-    } else if (currentSlidePayload.id === 'clear-notes' || !currentSlidePayload.text?.trim()) {
+    } else if (payload.currentSlide.id === 'clear-notes' || !payload.currentSlide.text?.trim()) {
       channelRef.current?.post('NOTES_CLEAR', payload, sessionId);
     } else {
       channelRef.current?.post('NOTES_LIVE', payload, sessionId);
@@ -158,18 +215,12 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
   };
 
   // Launch Projector Audience Window
-  const handleLaunchProjector = () => {
-    const url = window.location.origin + window.location.pathname + '#/presentation/display';
-    const displayWindow = window.open(
-      url,
-      'RCAG_Worship_Display',
-      'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no'
-    );
-    if (!displayWindow) {
+  const handleLaunchProjector = async () => {
+    const result = await openProjectorWindow();
+    if (result.popupBlocked) {
       setPopupBlocked(true);
     } else {
       setPopupBlocked(false);
-      displayWindow.focus();
     }
   };
 
@@ -274,6 +325,25 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
     }
   };
 
+  // Theme & Overlay controls
+  const handleSelectTheme = (themeToSet: PresentationTheme) => {
+    setActiveTheme(themeToSet);
+    const newOpacity = themeToSet.overlayOpacity !== undefined ? themeToSet.overlayOpacity : 0.20;
+    setOverlayOpacity(newOpacity);
+    if (liveNoteId && liveDisplayMode === 'NOTES') {
+      publishLiveState('NOTES', undefined, undefined, undefined, themeToSet, newOpacity);
+    }
+  };
+
+  const handleOverlayOpacityChange = (newOpacity: number) => {
+    setOverlayOpacity(newOpacity);
+    const updatedTheme = { ...activeTheme, overlayOpacity: newOpacity };
+    setActiveTheme(updatedTheme);
+    if (liveNoteId && liveDisplayMode === 'NOTES') {
+      publishLiveState('NOTES', undefined, undefined, undefined, updatedTheme, newOpacity);
+    }
+  };
+
   // Exit navigation handling
   const handleExitClick = () => {
     if (liveNoteId && liveDisplayMode === 'NOTES') {
@@ -309,11 +379,24 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
             <span>Exit Preaching Notes</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse" />
             <h1 className="font-extrabold text-sm sm:text-base text-white tracking-wide flex items-center gap-2">
               <span>🎤 Preaching Notes Studio</span>
             </h1>
+
+            {/* Real-time Projector Connection Status Indicator */}
+            {isProjectorConnected ? (
+              <span className="px-3 py-1 rounded-full bg-emerald-950 border border-emerald-500 text-emerald-400 font-extrabold text-xs flex items-center gap-1.5 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>🟢 Projector Connected</span>
+              </span>
+            ) : (
+              <span className="px-3 py-1 rounded-full bg-amber-950/80 border border-amber-500/80 text-amber-300 font-extrabold text-xs flex items-center gap-1.5 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                <span>🟡 Waiting for Projector</span>
+              </span>
+            )}
           </div>
         </div>
 
@@ -707,6 +790,84 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
 
           </div>
 
+          {/* Preaching Presentation Theme & Background Image Selector Card */}
+          <div className="bg-slate-900 border border-purple-500/30 rounded-3xl p-5 space-y-4 shadow-lg">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+              <span className="flex items-center gap-2 text-white">
+                <Palette className="w-4 h-4 text-purple-400" />
+                <span>Preaching Background & Theme</span>
+              </span>
+              <span className="text-[11px] font-mono text-purple-300 font-bold">
+                {activeTheme.name}
+              </span>
+            </div>
+
+            {/* Theme Preset Cards Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {PRESET_THEMES.filter(t => t.id === 'preaching' || t.id === 'preachingSanctuary' || t.id === 'communion' || t.id === 'bible' || t.id === 'cross' || t.id === 'prayer' || t.id === 'midnight').map((themeOption) => {
+                const isSelected = activeTheme.id === themeOption.id;
+                return (
+                  <button
+                    key={themeOption.id}
+                    onClick={() => handleSelectTheme(themeOption)}
+                    className={`relative rounded-xl overflow-hidden border p-2 text-left transition-all h-20 flex flex-col justify-between ${
+                      isSelected
+                        ? 'border-purple-500 ring-2 ring-purple-500/60 shadow-md scale-[1.02]'
+                        : 'border-slate-800 hover:border-slate-700 opacity-80 hover:opacity-100'
+                    }`}
+                    style={{
+                      background: themeOption.bgType === 'image' && themeOption.customBgImage
+                        ? `url(${themeOption.customBgImage}) center/cover no-repeat`
+                        : themeOption.background
+                    }}
+                  >
+                    {/* Dark Overlay Preview */}
+                    <div
+                      className="absolute inset-0 bg-black pointer-events-none"
+                      style={{ opacity: themeOption.overlayOpacity || 0.25 }}
+                    />
+
+                    {/* Content */}
+                    <div className="relative z-10 flex items-center justify-between w-full">
+                      <span className="text-[10px] font-extrabold text-white bg-slate-950/80 px-1.5 py-0.5 rounded backdrop-blur-xs truncate max-w-[85%]">
+                        {themeOption.name}
+                      </span>
+                      {isSelected && (
+                        <span className="w-4 h-4 rounded-full bg-purple-500 text-white flex items-center justify-center shrink-0 shadow">
+                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Background Overlay Darkness Slider */}
+            <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs font-bold">
+              <div className="flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-purple-400" />
+                <span className="text-slate-300">Background Overlay Darkness:</span>
+                <span className="font-mono text-purple-300 font-extrabold">{Math.round(overlayOpacity * 100)}%</span>
+              </div>
+
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <span className="text-[10px] text-slate-500 font-normal">Visible Image</span>
+                <input
+                  type="range"
+                  min="0.05"
+                  max="0.60"
+                  step="0.05"
+                  value={overlayOpacity}
+                  onChange={(e) => handleOverlayOpacityChange(parseFloat(e.target.value))}
+                  className="w-36 accent-purple-500 cursor-pointer"
+                  title="Adjust background overlay darkness percentage"
+                />
+                <span className="text-[10px] text-slate-500 font-normal">Dark Contrast</span>
+              </div>
+            </div>
+          </div>
+
           {/* Operator Projector Live Monitor Card */}
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-3 shadow-lg">
             <div className="flex items-center justify-between text-xs font-bold text-slate-400">
@@ -719,40 +880,59 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
               </span>
             </div>
 
-            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 min-h-[160px] relative overflow-hidden flex flex-col items-center justify-start text-center">
-              {liveDisplayMode === 'BLACKOUT' ? (
-                <div className="bg-black inset-0 absolute flex items-center justify-center text-rose-400 font-mono text-xs font-bold gap-2">
-                  <Square className="w-4 h-4 fill-current" />
-                  <span>[ BLACKOUT MODE ACTIVE ]</span>
-                </div>
-              ) : liveDisplayMode === 'LOGO' ? (
-                <div className="flex flex-col items-center justify-center space-y-2 text-center my-auto animate-fade">
-                  <img src={CHURCH_LOGO_URL} alt="RCAG Logo" className="w-12 h-12 object-contain" />
-                  <h3 className="font-kannada font-bold text-sm text-white">ಕನ್ನಡ ಕ್ರೈಸ್ತ ಆರಾಧನೆ</h3>
-                  <p className="text-[10px] text-amber-400 font-bold uppercase tracking-widest">[ CHURCH LOGO MODE ]</p>
-                </div>
-              ) : liveNoteId && noteSlides.find(s => s.id === liveNoteId)?.text.trim() ? (
-                <div className="space-y-3 w-full max-w-lg pt-2 animate-fade">
-                  {noteSlides.find(s => s.id === liveNoteId)?.title && (
-                    <div className="inline-block px-3.5 py-1 rounded-full bg-purple-950 border border-purple-500/50 text-amber-300 font-bold text-xs uppercase tracking-wider shadow">
-                      {noteSlides.find(s => s.id === liveNoteId)?.title}
-                    </div>
-                  )}
-                  <p
-                    className="text-white font-kannada font-bold leading-relaxed whitespace-pre-line"
-                    style={{
-                      fontSize: `${Math.min(26, liveFontSizePx * 0.45)}px`
-                    }}
-                  >
-                    {noteSlides.find(s => s.id === liveNoteId)?.text}
-                  </p>
-                </div>
-              ) : (
-                <div className="text-slate-600 text-xs font-medium my-auto animate-pulse flex flex-col items-center gap-2">
-                  <Square className="w-6 h-6 opacity-40" />
-                  <span>[ Projector Display Cleared / Neutral ]</span>
-                </div>
-              )}
+            <div
+              className="rounded-2xl p-6 min-h-[160px] relative overflow-hidden flex flex-col items-center justify-start text-center border border-slate-800 transition-all"
+              style={{
+                background: activeTheme.bgType === 'image' && activeTheme.customBgImage
+                  ? `url(${activeTheme.customBgImage}) center/cover no-repeat`
+                  : activeTheme.background
+              }}
+            >
+              {/* Dark Overlay inside monitor preview */}
+              <div
+                className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+                style={{
+                  backgroundColor: '#000000',
+                  opacity: liveDisplayMode === 'BLACKOUT' ? 1 : overlayOpacity
+                }}
+              />
+
+              <div className="relative z-10 w-full flex flex-col items-center justify-start h-full my-auto">
+                {liveDisplayMode === 'BLACKOUT' ? (
+                  <div className="text-rose-400 font-mono text-xs font-bold flex items-center justify-center gap-2 my-auto">
+                    <Square className="w-4 h-4 fill-current" />
+                    <span>[ BLACKOUT MODE ACTIVE ]</span>
+                  </div>
+                ) : liveDisplayMode === 'LOGO' ? (
+                  <div className="flex flex-col items-center justify-center space-y-2 text-center my-auto animate-fade">
+                    <img src={CHURCH_LOGO_URL} alt="RCAG Logo" className="w-12 h-12 object-contain drop-shadow-md" />
+                    <h3 className="font-kannada font-bold text-sm text-white drop-shadow">ಕನ್ನಡ ಕ್ರೈಸ್ತ ಆರಾಧನೆ</h3>
+                    <p className="text-[10px] text-amber-400 font-bold uppercase tracking-widest">[ CHURCH LOGO MODE ]</p>
+                  </div>
+                ) : liveNoteId && noteSlides.find(s => s.id === liveNoteId)?.text.trim() ? (
+                  <div className="space-y-3 w-full max-w-lg pt-2 animate-fade">
+                    {noteSlides.find(s => s.id === liveNoteId)?.title && (
+                      <div className="inline-block px-3.5 py-1 rounded-full bg-purple-950/80 border border-purple-500/50 text-amber-300 font-bold text-xs uppercase tracking-wider shadow">
+                        {noteSlides.find(s => s.id === liveNoteId)?.title}
+                      </div>
+                    )}
+                    <p
+                      className="text-white font-kannada font-bold leading-relaxed whitespace-pre-line drop-shadow-lg"
+                      style={{
+                        fontSize: `${Math.min(26, liveFontSizePx * 0.45)}px`,
+                        textShadow: '0 2px 8px rgba(0,0,0,0.9)'
+                      }}
+                    >
+                      {noteSlides.find(s => s.id === liveNoteId)?.text}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="text-slate-300 text-xs font-medium my-auto animate-pulse flex flex-col items-center gap-2">
+                    <Square className="w-6 h-6 opacity-60" />
+                    <span>[ Projector Display Cleared / Neutral ]</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

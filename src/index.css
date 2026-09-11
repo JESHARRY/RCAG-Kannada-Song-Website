@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,26 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 font-sans antialiased selection:bg-amber-400 selection:text-slate-950 transition-colors duration-200;
+    @apply bg-[#0d0f14] text-slate-100 font-sans antialiased selection:bg-amber-500/30 selection:text-amber-200 transition-colors duration-200;
+  }
+
+  /* Smooth custom scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0d0f14;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #242936;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #363d50;
   }
 }
 
@@ -14,14 +33,10 @@
 [data-chord] {
   position: relative;
   display: inline-block;
-  color: #6366f1;
+  color: #fbbf24;
   font-weight: 700;
   margin-top: 1.25em;
   margin-right: 0.25rem;
-}
-
-.dark [data-chord] {
-  color: #a5b4fc;
 }
 
 [data-chord]::before {
@@ -29,14 +44,11 @@
   position: absolute;
   top: -1.3em;
   left: 0;
-  font-size: 0.72em;
+  font-size: 0.75em;
   font-weight: 800;
   color: #f59e0b;
   line-height: 1;
-}
-
-.dark [data-chord]::before {
-  color: #fbbf24;
+  letter-spacing: 0.05em;
 }
 
 /* Scrollbar utilities */
@@ -48,22 +60,22 @@
   scrollbar-width: none;
 }
 
-/* Custom transitions for Worship Presentation Studio */
+/* Presentation Studio Animations */
 @keyframes slideFadeIn {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes slideLeftIn {
   from {
     opacity: 0;
-    transform: translateX(40px);
+    transform: translateX(24px);
   }
   to {
     opacity: 1;
@@ -74,7 +86,7 @@
 @keyframes slideRightIn {
   from {
     opacity: 0;
-    transform: translateX(-40px);
+    transform: translateX(-24px);
   }
   to {
     opacity: 1;
@@ -85,7 +97,7 @@
 @keyframes zoomIn {
   from {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -94,18 +106,164 @@
 }
 
 .anim-fade {
-  animation: slideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .anim-slide-left {
-  animation: slideLeftIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideLeftIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .anim-slide-right {
-  animation: slideRightIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideRightIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .anim-zoom {
-  animation: zoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Heavenly Atmosphere & Page Entrance Animations */
+@keyframes pageEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rayBeam {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.05) rotate(2deg);
+  }
+}
+
+@keyframes starPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35) rotate(12deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes lightPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes logoCrossGlow {
+  0%, 100% {
+    opacity: 0.75;
+    filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.25));
+  }
+  50% {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 28px rgba(245, 158, 11, 0.42));
+  }
+}
+
+.animate-logo-cross-glow {
+  animation: logoCrossGlow 14s ease-in-out infinite;
+}
+
+.anim-page-entrance {
+  animation: pageEntrance 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-stagger-1 {
+  animation: pageEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.06s forwards;
+  opacity: 0;
+}
+
+.anim-stagger-2 {
+  animation: pageEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards;
+  opacity: 0;
+}
+
+.anim-stagger-3 {
+  animation: pageEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.18s forwards;
+  opacity: 0;
+}
+
+.animate-star-pop {
+  animation: starPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Cross Gentle Breathing Keyframes & Classes */
+@keyframes crossBreathing {
+  0%, 100% {
+    transform: scale(0.975);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+@keyframes lightGlowBreathing {
+  0%, 100% {
+    opacity: 0.14;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 0.22;
+    transform: scale(1.03);
+  }
+}
+
+.animate-cross-breathing {
+  animation: crossBreathing 8s ease-in-out infinite;
+}
+
+.animate-glow-breathing {
+  animation: lightGlowBreathing 8s ease-in-out infinite;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-cross-breathing,
+  .animate-glow-breathing {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Heavenly Angel Cursor - Desktop Fine Pointer Only */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: url('/assets/ui/angel-cursor.svg') 4 2, auto;
+  }
+  
+  a, button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], select, .interactive-hover {
+    cursor: url('/assets/ui/angel-cursor-pointer.svg') 5 5, pointer !important;
+  }
+
+  input[type="text"], input[type="search"], input[type="number"], input[type="password"], textarea, [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
+/* Heavenly Card Subtle Illumination, Shimmer & Elevation */
+.heavenly-card {
+  position: relative;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.heavenly-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 158, 11, 0.42) !important;
+  box-shadow: 0 14px 32px -6px rgba(245, 158, 11, 0.18), 0 0 16px 0 rgba(245, 158, 11, 0.10) !important;
+}
+
+
 

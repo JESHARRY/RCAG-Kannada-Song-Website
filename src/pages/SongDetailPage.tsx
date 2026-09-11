@@ -159,35 +159,37 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-20 font-sans">
+    <div className="max-w-4xl mx-auto space-y-5 pb-20 font-sans anim-page-entrance">
       {/* Header Container */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
+      <div className="bg-church-surface border border-church-border/80 rounded-xl p-5 sm:p-8 shadow-sm relative overflow-hidden">
+        {/* Soft Heavenly Background Light Bloom */}
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
 
         {/* Title Section */}
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="font-mono font-extrabold text-xs px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-amber-400 tracking-wider">
-              {formatSongNumber(getSongNumber(song))}
+            <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-md bg-[#0d0f14] border border-slate-800 text-amber-400 tracking-wide">
+              #{formatSongNumber(getSongNumber(song))}
             </span>
             {song.category && (
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 uppercase">
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-slate-900 text-slate-400 uppercase">
                 {song.category}
               </span>
             )}
             {isOverridden && (
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800 flex items-center gap-1">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-md bg-amber-950/80 text-amber-300 border border-amber-800 flex items-center gap-1">
                 <Check className="w-3 h-3 text-amber-400" />
                 <span>Custom Edited Lyrics</span>
               </span>
             )}
           </div>
 
-          <h1 className="font-kannada font-bold text-3xl sm:text-4xl text-white leading-tight mb-1">
+          <h1 className="font-kannada font-bold text-2xl sm:text-4xl text-white leading-tight mb-1">
             {song.titleKannada}
           </h1>
 
           {song.titleEnglish && (
-            <p className="text-base text-slate-400 font-medium">
+            <p className="text-sm sm:text-base text-slate-400 font-normal">
               {song.titleEnglish}
             </p>
           )}
@@ -195,7 +197,7 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
 
         {/* Source PDF Banner if applicable */}
         {song.sourceType === 'pdf' && (
-          <div className="flex items-center gap-2 text-xs text-emerald-300 bg-emerald-950/60 border border-emerald-800 p-3 rounded-2xl mb-4">
+          <div className="flex items-center gap-2 text-xs text-emerald-300 bg-slate-900 border border-slate-800 p-3 rounded-lg mb-4">
             <FileText className="w-4 h-4 shrink-0 text-emerald-400" />
             <span>Extracted from PDF: <strong>{song.sourcePdf}</strong> (Pages {song.sourcePageStart}–{song.sourcePageEnd})</span>
           </div>
@@ -204,22 +206,22 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
         {/* Toolbar Controls */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
 
-          {/* Main Presentation & Edit Action Buttons */}
+          {/* Main Action Buttons */}
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => onNavigate(`/presentation/song/${song.id}`)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs shadow-md hover:scale-[1.02] transition-transform"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-xs"
             >
               <Tv className="w-4 h-4" />
-              <span>▶ Present Song</span>
+              <span>Present Song</span>
             </button>
 
             <button
               onClick={() => setIsEditing(prev => !prev)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full font-bold text-xs border transition-colors ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-bold text-xs border transition-colors ${
                 isEditing
-                  ? 'bg-amber-400 text-slate-950 border-amber-300'
-                  : 'bg-indigo-950/80 text-indigo-300 border-indigo-800 hover:bg-indigo-900'
+                  ? 'bg-amber-500 text-slate-950 border-amber-400'
+                  : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-white'
               }`}
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -229,7 +231,7 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
             {isOverridden && (
               <button
                 onClick={handleRestoreOriginal}
-                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 text-xs font-bold transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 text-xs font-bold transition-colors"
                 title="Restore original static lyrics"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
@@ -239,12 +241,12 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
           </div>
 
           {/* Language Tabs */}
-          <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <div className="flex bg-[#0d0f14] p-1 rounded-lg border border-slate-800">
             <button
               onClick={() => setActiveTab('kannada')}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold font-kannada transition-all ${
+              className={`px-3.5 py-1.5 rounded-md text-xs font-bold font-kannada transition-colors ${
                 activeTab === 'kannada'
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-amber-500 text-slate-950 shadow-xs'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -252,9 +254,9 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
             </button>
             <button
               onClick={() => setActiveTab('english')}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-colors ${
                 activeTab === 'english'
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-amber-500 text-slate-950 shadow-xs'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -406,7 +408,7 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
       )}
 
       {/* Lyrics Reading Card */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl">
+      <div className="bg-church-surface border border-church-border rounded-xl p-6 sm:p-10 shadow-sm">
         <div
           className={`${activeTab === 'kannada' ? 'font-kannada' : 'font-sans'} ${fontSizeClass} text-slate-100 space-y-4`}
           dangerouslySetInnerHTML={{

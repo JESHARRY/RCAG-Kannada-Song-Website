@@ -77,17 +77,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/80 transition-colors shadow-2xl">
-      <div className="relative w-full px-3 sm:px-6 lg:px-8 h-18 sm:h-20 grid grid-cols-[1fr_auto_1fr] items-center max-w-7xl mx-auto" ref={menuRef}>
+    <header className="sticky top-0 z-40 w-full bg-[#0d0f14]/95 backdrop-blur-md border-b border-slate-800/80 transition-colors shadow-md">
+      <div className="relative w-full px-3 sm:px-6 lg:px-8 h-16 sm:h-18 grid grid-cols-[1fr_auto_1fr] items-center max-w-7xl mx-auto" ref={menuRef}>
 
-        {/* 1. LEFT ZONE: Home, All Songs, Search (Aligned inward toward center branding) */}
-        <div className="justify-self-end flex items-center gap-1 sm:gap-2 pr-3 sm:pr-6 lg:pr-8 z-10">
+        {/* 1. LEFT ZONE: Home, All Songs, Search */}
+        <div className="justify-self-end flex items-center gap-1 sm:gap-2 pr-2 sm:pr-4 lg:pr-6 z-10">
           <button
             onClick={() => handleNavClick('/')}
-            className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               isLinkActive('/')
-                ? 'bg-amber-400/15 text-amber-300 border border-amber-400/30 shadow-xs'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900 hover:-translate-y-0.5'
+                ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900'
             }`}
           >
             <Home className="w-3.5 h-3.5" />
@@ -96,22 +96,22 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <button
             onClick={() => handleNavClick('/songs')}
-            className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               isLinkActive('/songs')
-                ? 'bg-amber-400/15 text-amber-300 border border-amber-400/30 shadow-xs'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900 hover:-translate-y-0.5'
+                ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900'
             }`}
           >
-            <Music className="w-3.5 h-3.5 text-indigo-400" />
+            <Music className="w-3.5 h-3.5 text-amber-400" />
             <span className="hidden min-[480px]:inline">All Songs</span>
           </button>
 
           <button
             onClick={() => handleNavClick('/search')}
-            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
+            className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               isLinkActive('/search')
-                ? 'bg-amber-400/15 text-amber-300 border border-amber-400/30 shadow-xs'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900 hover:-translate-y-0.5'
+                ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900'
             }`}
           >
             <Search className="w-3.5 h-3.5 text-amber-400" />
@@ -119,71 +119,61 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
 
-        {/* 2. CENTER ZONE: Physically Centered Luminous Animated Glowing Church Branding Capsule */}
+        {/* 2. CENTER ZONE: Centered Clean Church Branding Capsule */}
         <div
           onClick={() => handleNavClick('/')}
-          className="justify-self-center z-20 cursor-pointer"
+          className="justify-self-center z-20 cursor-pointer group"
         >
-          <div className="relative rounded-full p-[1.5px] overflow-hidden shadow-[0_0_25px_rgba(139,92,246,0.3),0_0_15px_rgba(245,158,11,0.25)] group hover:scale-[1.02] transition-transform">
+          <div className="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-900/90 border border-amber-500/30 hover:border-amber-500/60 transition-all duration-300 shadow-[0_0_15px_rgba(245,158,11,0.12)] hover:shadow-[0_0_22px_rgba(245,158,11,0.25)]">
+            <img
+              src={CHURCH_LOGO_URL}
+              alt="Revival Centre AG Church Logo"
+              className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0 drop-shadow-[0_0_8px_rgba(245,158,11,0.3)] group-hover:scale-110 transition-transform duration-300"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
 
-            {/* Continuously Animated Rotating Conic-Gradient Light Border */}
-            <div className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,#f59e0b,#8b5cf6,#3b82f6,#f59e0b)] animate-[spin_8s_linear_infinite] motion-reduce:animate-none opacity-90" />
-
-            {/* Inner Dark Translucent Capsule */}
-            <div className="relative rounded-full bg-slate-950/95 backdrop-blur-2xl px-3.5 sm:px-5 py-1.5 flex items-center gap-2.5 sm:gap-3">
-              <img
-                src={CHURCH_LOGO_URL}
-                alt="Revival Centre AG Church Logo"
-                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
-
-              <div className="flex flex-col justify-center text-left">
-                <h1 className="font-kannada font-extrabold text-xs sm:text-sm text-white tracking-tight leading-none mb-0.5">
-                  ರಿವೈವಲ್ ಸೆಂಟರ್ ಎಜಿ ಚರ್ಚ್
-                </h1>
-                <div className="text-[10px] sm:text-[11px] font-bold text-slate-300 tracking-wide leading-tight">
-                  Revival Centre AG Church
-                </div>
-                <div className="text-[9px] font-semibold text-amber-400/90 uppercase tracking-widest leading-none mt-0.5">
-                  Kannada Christian Songs
-                </div>
+            <div className="flex flex-col justify-center text-left">
+              <h1 className="font-kannada font-bold text-xs sm:text-sm text-white tracking-tight leading-none mb-0.5 group-hover:text-amber-300 transition-colors">
+                ರಿವೈವಲ್ ಸೆಂಟರ್ ಎಜಿ ಚರ್ಚ್
+              </h1>
+              <div className="text-[10px] sm:text-[11px] font-semibold text-slate-300 tracking-wide leading-tight">
+                Revival Centre AG Church
               </div>
             </div>
           </div>
         </div>
 
-        {/* 3. RIGHT ZONE: Favorites, Menu Button, Theme Toggle (Aligned inward toward center branding) */}
-        <div className="justify-self-start flex items-center gap-1.5 sm:gap-2 pl-3 sm:pl-6 lg:pl-8 z-10">
+        {/* 3. RIGHT ZONE: Favorites, Menu Button, Theme Toggle */}
+        <div className="justify-self-start flex items-center gap-1.5 sm:gap-2 pl-2 sm:pl-4 lg:pl-6 z-10">
 
-          {/* Favorites Button with Dynamic Counter Badge */}
+          {/* Favorites Button with Counter Badge */}
           <button
             onClick={() => handleNavClick('/favorites')}
             title="Favorites"
-            className={`flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               isLinkActive('/favorites')
-                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-xs'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900 hover:-translate-y-0.5'
+                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900'
             }`}
           >
             <Star className={`w-3.5 h-3.5 ${favorites.length > 0 ? 'fill-amber-400 text-amber-400' : 'text-slate-400'}`} />
             <span className="hidden sm:inline">Favorites</span>
             {favorites.length > 0 && (
-              <span className="font-mono font-extrabold text-[10px] px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950">
+              <span className="font-mono font-bold text-[10px] px-1.5 py-0.2 rounded-md bg-amber-500 text-slate-950">
                 {favorites.length}
               </span>
             )}
           </button>
 
-          {/* Top-Right Menu Dropdown Button */}
+          {/* Top-Right Menu Button */}
           <button
             onClick={() => setIsMenuOpen(prev => !prev)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all duration-200 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
               isMenuOpen
-                ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/20 scale-105'
-                : 'bg-slate-900 border border-slate-800 text-slate-200 hover:text-white hover:border-slate-700 hover:-translate-y-0.5'
+                ? 'bg-amber-500 text-slate-950 font-extrabold shadow-sm'
+                : 'bg-slate-900 border border-slate-800 text-slate-200 hover:text-white hover:border-slate-700'
             }`}
             aria-label="Toggle Navigation Menu"
             title="Full Navigation Menu"
@@ -195,7 +185,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition-colors"
+            className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? (
@@ -206,9 +196,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
 
-        {/* 4. DROPDOWN POPOVER PANEL (Opens from Top-Right) */}
+        {/* 4. DROPDOWN POPOVER PANEL */}
         {isMenuOpen && (
-          <div className="absolute top-full right-3 sm:right-6 mt-2 w-80 bg-slate-900/95 border border-slate-800 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl z-50 space-y-5 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="absolute top-full right-3 sm:right-6 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl z-50 space-y-4 animate-fade">
 
             {/* Popover Header */}
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">

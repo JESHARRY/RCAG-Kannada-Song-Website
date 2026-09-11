@@ -101,21 +101,21 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 animate-fade my-8">
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-fade">
+      <div className="bg-church-surface border border-church-border rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden p-6 sm:p-7 space-y-5 my-8">
 
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3.5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-950 border border-indigo-700/60 text-amber-400 flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-lg bg-slate-900 text-amber-400 flex items-center justify-center font-bold">
               <PlusCircle className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-xl text-white">Create New Worship Song</h3>
-              <p className="text-xs text-slate-400 font-medium">Add a custom song to your local worship library</p>
+              <h3 className="font-bold text-base text-white">Create Custom Worship Song</h3>
+              <p className="text-xs text-slate-400">Add a song to your local church library</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors">
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-md">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -123,7 +123,7 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 text-xs font-bold">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Kannada Title */}
             <div className="space-y-1">
               <label className="text-slate-300 uppercase tracking-wider block">
@@ -133,8 +133,8 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
                 type="text"
                 value={titleKannada}
                 onChange={(e) => setTitleKannada(e.target.value)}
-                placeholder="ಉದಾ: ಯೇಸುವೇ ನನ್ನ ಜೀವ"
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 font-kannada text-sm text-white focus:outline-none focus:border-amber-400"
+                placeholder="e.g. ಯೇಸುವೇ ನನ್ನ ಜೀವ"
+                className="w-full p-2.5 rounded-lg bg-[#0d0f14] border border-slate-800 font-kannada text-sm text-white focus:outline-none focus:border-amber-500"
               />
               {errors.titleKannada && <p className="text-rose-400 text-[11px] font-normal">{errors.titleKannada}</p>}
             </div>
@@ -149,12 +149,12 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
                 value={titleEnglish}
                 onChange={(e) => setTitleEnglish(e.target.value)}
                 placeholder="e.g. Yesuve Nanna Jeeva"
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-400"
+                className="w-full p-2.5 rounded-lg bg-[#0d0f14] border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-500"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             {/* Key */}
             <div className="space-y-1">
               <label className="text-slate-300 uppercase tracking-wider block">
@@ -165,7 +165,7 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
                 value={songKey}
                 onChange={(e) => setSongKey(e.target.value)}
                 placeholder="e.g. C, Dm, G"
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-400"
+                className="w-full p-2.5 rounded-lg bg-[#0d0f14] border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-500"
               />
             </div>
 
@@ -177,7 +177,7 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-400"
+                className="w-full p-2.5 rounded-lg bg-[#0d0f14] border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-500"
               >
                 <option value="general">General Worship</option>
                 <option value="praise">Praise & Thanksgiving</option>
@@ -196,7 +196,7 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
                 value={chords}
                 onChange={(e) => setChords(e.target.value)}
                 placeholder="e.g. C - G - Am - F"
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-400"
+                className="w-full p-2.5 rounded-lg bg-[#0d0f14] border border-slate-800 text-sm text-white focus:outline-none focus:border-amber-500"
               />
             </div>
           </div>
@@ -207,11 +207,11 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
               Kannada Lyrics Text <span className="text-amber-400">*</span>
             </label>
             <textarea
-              rows={6}
+              rows={5}
               value={lyricsKannada}
               onChange={(e) => setLyricsKannada(e.target.value)}
-              placeholder="ಕನ್ನಡ ಸಾಲುಗಳನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ...&#10;ಖಾಲಿ ಸಾಲುಗಳು ನುಡಿಗಳ ಭಾಗಗಳನ್ನು (Stanzas) ವಿಂಗಡಿಸುತ್ತವೆ."
-              className="w-full p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-kannada text-sm text-white leading-relaxed focus:outline-none focus:border-amber-400"
+              placeholder="Enter Kannada lyrics... Empty lines separate stanzas."
+              className="w-full p-3 rounded-lg bg-[#0d0f14] border border-slate-800 font-kannada text-sm text-white leading-relaxed focus:outline-none focus:border-amber-500"
             />
             {errors.lyricsKannada && <p className="text-rose-400 text-[11px] font-normal">{errors.lyricsKannada}</p>}
           </div>
@@ -225,26 +225,26 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
               rows={4}
               value={lyricsEnglish}
               onChange={(e) => setLyricsEnglish(e.target.value)}
-              placeholder="Enter English transliteration lines here..."
-              className="w-full p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white leading-relaxed focus:outline-none focus:border-amber-400"
+              placeholder="Enter English transliteration lines..."
+              className="w-full p-3 rounded-lg bg-[#0d0f14] border border-slate-800 text-sm text-white leading-relaxed focus:outline-none focus:border-amber-500"
             />
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-colors"
+              className="px-5 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 font-bold text-xs transition-colors"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="px-7 py-2.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-extrabold text-xs shadow-lg transition-transform hover:scale-105"
+              className="px-6 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-xs"
             >
-              [ Save Song ]
+              Save Custom Song
             </button>
           </div>
 

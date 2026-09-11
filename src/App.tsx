@@ -23,6 +23,7 @@ import { MyPresentationsPage } from './pages/MyPresentationsPage';
 import { AudiencePresentationPage } from './pages/AudiencePresentationPage';
 import { PreachingNotesPage } from './pages/PreachingNotesPage';
 import { PresentationSlide } from './types/presentation';
+import { HeavenlyLightOverlay } from './components/HeavenlyLightOverlay';
 
 export function AppContent() {
   const { allSongs } = useApp();
@@ -157,7 +158,8 @@ export function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-[#0d0f14] text-slate-100 flex flex-col font-sans transition-colors duration-200">
+      <HeavenlyLightOverlay />
 
       {/* 1. Global Header Navigation (Full Width with Centered Church Branding & Menu) */}
       <Navbar

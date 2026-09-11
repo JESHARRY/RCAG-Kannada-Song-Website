@@ -18,30 +18,54 @@ export const AudiencePresentationPage: React.FC = () => {
   const channelRef = useRef<PresentationChannel | null>(null);
   const handshakeRetryCount = useRef(0);
   const handshakeTimer = useRef<NodeJS.Timeout | null>(null);
+  const liveStateRef = useRef<LiveState | null>(liveState);
+  useEffect(() => {
+    liveStateRef.current = liveState;
+  }, [liveState]);
 
   useEffect(() => {
     const handleMessage = (msg: PresentationMessage) => {
+      console.log('[AUDIENCE] Received message:', msg.type, msg);
+
       if (msg.type === 'PING') {
-        // Respond to heartbeat PING from operator
-        channelRef.current?.post('PONG', liveState || undefined, liveState?.sessionId);
+        // Respond to heartbeat PING from operator with latest ref state
+        channelRef.current?.post('PONG', liveStateRef.current || undefined, liveStateRef.current?.sessionId);
         return;
       }
 
       if (msg.type === 'CURRENT_LIVE_STATE' || msg.type === 'GO_LIVE' || msg.type === 'LIVE_STATE_UPDATE' || msg.type === 'NOTES_LIVE' || msg.type === 'NOTES_CLEAR' || msg.type === 'BLACKOUT_TOGGLE' || msg.type === 'LOGO_TOGGLE') {
         if (msg.payload) {
+          console.log('[AUDIENCE] Switching displayMode to:', msg.payload.displayMode, 'Slide:', msg.payload.currentSlide);
           setLiveState(msg.payload);
+          liveStateRef.current = msg.payload;
           try {
             localStorage.setItem('kcs_active_live_state', JSON.stringify(msg.payload));
           } catch {}
         } else if (msg.type === 'BLACKOUT_TOGGLE') {
-          setLiveState(prev => prev ? { ...prev, displayMode: 'BLACKOUT' } : null);
+          setLiveState(prev => {
+            const next = prev ? { ...prev, displayMode: 'BLACKOUT' as const } : null;
+            liveStateRef.current = next;
+            return next;
+          });
         } else if (msg.type === 'LOGO_TOGGLE') {
-          setLiveState(prev => prev ? { ...prev, displayMode: 'LOGO' } : null);
+          setLiveState(prev => {
+            const next = prev ? { ...prev, displayMode: 'LOGO' as const } : null;
+            liveStateRef.current = next;
+            return next;
+          });
         }
       } else if (msg.type === 'NOTES_MODE_START') {
-        setLiveState(prev => prev ? { ...prev, displayMode: 'NOTES' } : null);
+        setLiveState(prev => {
+          const next = prev ? { ...prev, displayMode: 'NOTES' as const } : null;
+          liveStateRef.current = next;
+          return next;
+        });
       } else if (msg.type === 'NOTES_MODE_END' || msg.type === 'PRESENTATION_STOP') {
-        setLiveState(prev => prev ? { ...prev, displayMode: 'LOGO' } : null);
+        setLiveState(prev => {
+          const next = prev ? { ...prev, displayMode: 'LOGO' as const } : null;
+          liveStateRef.current = next;
+          return next;
+        });
       }
     };
 
@@ -214,7 +238,8 @@ export const AudiencePresentationPage: React.FC = () => {
               style={{
                 color: theme.textColor || '#ffffff',
                 fontSize: `${fontSizePx}px`,
-                lineHeight: lineHeightVal || 1.4
+                lineHeight: lineHeightVal || 1.4,
+                textShadow: '0 4px 16px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.95)'
               }}
             >
               {currentSlide.text}

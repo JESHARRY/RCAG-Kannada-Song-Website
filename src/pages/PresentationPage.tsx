@@ -654,8 +654,117 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
       </div>
 
       {/* ==================================================== */}
-      {/* 3. MAIN DASHBOARD: WORSHIP PRESENTATION STUDIO */}
+      {/* 2B. SERVICE BACKGROUND THEME CONTROL BAR */}
       {/* ==================================================== */}
+      <div className="bg-slate-950/90 border-b border-slate-800 p-3 px-4 sm:px-6 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <h3 className="font-extrabold text-white tracking-wide uppercase text-xs">
+              BACKGROUND VISUAL GALLERY
+            </h3>
+            <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">
+              (Click background card to PREVIEW — Click APPLY to publish to Projector)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Background Overlay Visibility Slider */}
+            <div className="flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-xl border border-slate-800">
+              <span className="text-slate-400 text-[11px] font-bold">Background Visibility:</span>
+              <span className="text-[10px] text-slate-500 font-mono">Clearer</span>
+              <input
+                type="range"
+                min={0.10}
+                max={0.65}
+                step={0.05}
+                value={previewTheme.overlayOpacity !== undefined ? previewTheme.overlayOpacity : 0.25}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setPreviewTheme(prev => ({ ...prev, overlayOpacity: val }));
+                }}
+                className="w-20 accent-amber-400 cursor-pointer"
+                title="Adjust background visibility / dark overlay opacity"
+              />
+              <span className="text-[10px] text-slate-500 font-mono">Darker</span>
+              <span className="font-mono text-amber-400 text-xs font-bold w-9 text-right">
+                {Math.round((1 - (previewTheme.overlayOpacity !== undefined ? previewTheme.overlayOpacity : 0.25)) * 100)}%
+              </span>
+            </div>
+
+            <button
+              onClick={() => {
+                const defaultTheme = PRESET_THEMES.find(t => t.id === 'worship') || PRESET_THEMES[0];
+                setPreviewTheme(defaultTheme);
+              }}
+              className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-rose-500/50 text-slate-400 hover:text-rose-300 font-bold text-xs transition-colors"
+              title="Reset background theme to Default (General Worship)"
+            >
+              Reset Background
+            </button>
+
+            <button
+              onClick={() => handleGoLive()}
+              className="px-5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold text-xs shadow-lg hover:scale-105 transition-all border border-emerald-400/40"
+              title="Apply selected theme & active stanza to live projector"
+            >
+              APPLY TO PROJECTOR
+            </button>
+          </div>
+        </div>
+
+        {/* Thumbnail Cards Row */}
+        <div className="flex items-center gap-3 overflow-x-auto pb-1.5 pt-0.5 scrollbar-thin scrollbar-thumb-slate-800">
+          {PRESET_THEMES.map((t) => {
+            const isPreview = previewTheme.id === t.id;
+            const isLive = liveState.theme.id === t.id && liveState.displayMode === 'LIVE';
+
+            return (
+              <button
+                key={t.id}
+                onClick={() => setPreviewTheme(t)}
+                className={`group relative shrink-0 w-36 sm:w-40 h-20 rounded-2xl overflow-hidden border transition-all text-left flex flex-col justify-end p-2.5 shadow-md ${
+                  isPreview
+                    ? 'border-amber-400 ring-2 ring-amber-400/60 shadow-amber-950/40 scale-[1.02]'
+                    : 'border-slate-800 hover:border-slate-600 hover:scale-[1.01]'
+                }`}
+                style={{
+                  background: t.bgType === 'image' && t.customBgImage
+                    ? `url(${t.customBgImage}) center/cover no-repeat`
+                    : t.background
+                }}
+              >
+                {/* Overlay inside thumbnail card */}
+                <div
+                  className="absolute inset-0 bg-black transition-opacity pointer-events-none"
+                  style={{ opacity: t.overlayOpacity !== undefined ? Math.min(0.4, t.overlayOpacity) : 0.25 }}
+                />
+
+                {/* Status Badges */}
+                <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1">
+                  {isLive && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-black text-[9px] uppercase tracking-wider shadow">
+                      LIVE
+                    </span>
+                  )}
+                  {isPreview && !isLive && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[9px] uppercase tracking-wider shadow">
+                      PREVIEW
+                    </span>
+                  )}
+                </div>
+
+                {/* Card Title */}
+                <div className="relative z-10 space-y-0.5">
+                  <span className="font-bold text-xs text-white leading-tight block drop-shadow-md truncate">
+                    {t.name}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
       <main className="flex-1 p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto w-full min-h-0">
 
           {/* ---------------------------------------------------- */}
@@ -846,13 +955,21 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
                     : liveState.theme.background
                 }}
               >
+                {/* Background Dark Overlay for Image Themes */}
+                {liveState.displayMode === 'LIVE' && liveState.theme.overlayOpacity > 0 && (
+                  <div
+                    className="absolute inset-0 bg-black pointer-events-none transition-opacity duration-300"
+                    style={{ opacity: liveState.theme.overlayOpacity }}
+                  />
+                )}
+
                 {liveState.displayMode === 'BLACKOUT' ? (
-                  <div className="text-slate-600 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
+                  <div className="text-slate-600 font-mono text-xs uppercase tracking-widest flex items-center gap-2 relative z-10">
                     <Square className="w-4 h-4 fill-current text-rose-500" />
                     <span>Blackout Mode Active</span>
                   </div>
                 ) : liveState.displayMode === 'LOGO' ? (
-                  <div className="flex flex-col items-center justify-center space-y-4 text-center animate-fade">
+                  <div className="flex flex-col items-center justify-center space-y-4 text-center animate-fade relative z-10">
                     <img
                       src={CHURCH_LOGO_URL}
                       alt="RCAG Worship Logo"
@@ -866,7 +983,7 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
                     </p>
                   </div>
                 ) : (
-                  <div className="w-full space-y-4 text-center animate-fade max-w-xl">
+                  <div className="w-full space-y-4 text-center animate-fade max-w-xl relative z-10">
                     {liveState.currentSlide.title && (
                       <div
                         className="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border"
@@ -1030,19 +1147,30 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
 
             {/* Themes Selection */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Worship Themes</label>
-              <div className="grid grid-cols-2 gap-2">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Visual Worship Themes Gallery</label>
+              <div className="grid grid-cols-2 gap-2.5">
                 {PRESET_THEMES.map((t) => (
                   <button
                     key={t.id}
                     onClick={() => setPreviewTheme(t)}
-                    className={`p-3 rounded-xl border text-left text-xs font-bold transition-all ${
+                    className={`h-20 p-2.5 rounded-2xl border text-left text-xs font-bold transition-all relative overflow-hidden flex flex-col justify-end ${
                       previewTheme.id === t.id
-                        ? 'border-amber-400 bg-indigo-950 text-white'
-                        : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700'
+                        ? 'border-amber-400 ring-2 ring-amber-400/50 shadow-lg'
+                        : 'border-slate-800 hover:border-slate-700'
                     }`}
+                    style={{
+                      background: t.bgType === 'image' && t.customBgImage
+                        ? `url(${t.customBgImage}) center/cover no-repeat`
+                        : t.background
+                    }}
                   >
-                    {t.name}
+                    <div
+                      className="absolute inset-0 bg-black pointer-events-none"
+                      style={{ opacity: t.overlayOpacity !== undefined ? Math.min(0.4, t.overlayOpacity) : 0.25 }}
+                    />
+                    <span className="relative z-10 text-white font-bold drop-shadow-md text-xs">
+                      {t.name}
+                    </span>
                   </button>
                 ))}
               </div>

@@ -3,10 +3,25 @@
 /**
  * Helper to construct asset URLs compatible with Vite and GitHub Pages subpaths.
  */
-export function getAssetUrl(path: string): string {
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+export function getAssetUrl(path: string | undefined): string {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+    return path;
+  }
   const baseUrl = (import.meta as any).env?.BASE_URL || '/';
-  return baseUrl.endsWith('/') ? `${baseUrl}${cleanPath}` : `${baseUrl}/${cleanPath}`;
+  const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+
+  if (cleanBase !== '/' && path.startsWith(cleanBase)) {
+    return path;
+  }
+
+  let cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  const baseWithoutSlash = cleanBase.replace(/^\/|\/$/g, '');
+  if (baseWithoutSlash && cleanPath.startsWith(`${baseWithoutSlash}/`)) {
+    cleanPath = cleanPath.slice(baseWithoutSlash.length + 1);
+  }
+
+  return `${cleanBase}${cleanPath}`;
 }
 
 export const CHURCH_LOGO_URL = getAssetUrl('assets/church-logo.png');

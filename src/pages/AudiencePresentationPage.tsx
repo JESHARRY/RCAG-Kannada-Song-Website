@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PresentationChannel } from '../services/presentationChannel';
 import { LiveState, PresentationMessage, PRESET_THEMES } from '../types/presentation';
-import { CHURCH_LOGO_URL } from '../utils/assetPath';
+import { CHURCH_LOGO_URL, getAssetUrl } from '../utils/assetPath';
 
 export const AudiencePresentationPage: React.FC = () => {
   const [liveState, setLiveState] = useState<LiveState | null>(() => {
@@ -183,7 +183,7 @@ export const AudiencePresentationPage: React.FC = () => {
         className="fixed inset-0 z-[99999] bg-black w-screen h-screen overflow-hidden select-none cursor-none"
         style={{
           background: theme.bgType === 'image' && theme.customBgImage
-            ? `url(${theme.customBgImage}) center/cover no-repeat`
+            ? `url(${getAssetUrl(theme.customBgImage)}) center/cover no-repeat`
             : theme.background
         }}
       >
@@ -267,7 +267,7 @@ export const AudiencePresentationPage: React.FC = () => {
       className="fixed inset-0 z-[99999] bg-black w-screen h-screen overflow-hidden select-none cursor-none"
       style={{
         background: theme.bgType === 'image' && theme.customBgImage
-          ? `url(${theme.customBgImage}) center/cover no-repeat`
+          ? `url(${getAssetUrl(theme.customBgImage)}) center/cover no-repeat`
           : theme.background
       }}
     >

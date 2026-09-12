@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { PresentationSlide, LiveState, PRESET_THEMES, DisplayMode, PresentationMessage, PresentationTheme } from '../types/presentation';
 import { PresentationChannel, openProjectorWindow, LOCAL_STORAGE_LIVE_STATE_KEY } from '../services/presentationChannel';
-import { CHURCH_LOGO_URL } from '../utils/assetPath';
+import { CHURCH_LOGO_URL, getAssetUrl } from '../utils/assetPath';
 
 interface PreachingNotesPageProps {
   onNavigate: (path: string) => void;
@@ -817,7 +817,7 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
                     }`}
                     style={{
                       background: themeOption.bgType === 'image' && themeOption.customBgImage
-                        ? `url(${themeOption.customBgImage}) center/cover no-repeat`
+                        ? `url(${getAssetUrl(themeOption.customBgImage)}) center/cover no-repeat`
                         : themeOption.background
                     }}
                   >
@@ -884,7 +884,7 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
               className="rounded-2xl p-6 min-h-[160px] relative overflow-hidden flex flex-col items-center justify-start text-center border border-slate-800 transition-all"
               style={{
                 background: activeTheme.bgType === 'image' && activeTheme.customBgImage
-                  ? `url(${activeTheme.customBgImage}) center/cover no-repeat`
+                  ? `url(${getAssetUrl(activeTheme.customBgImage)}) center/cover no-repeat`
                   : activeTheme.background
               }}
             >

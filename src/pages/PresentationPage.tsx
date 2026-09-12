@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CHURCH_LOGO_URL } from '../utils/assetPath';
+import { CHURCH_LOGO_URL, getAssetUrl } from '../utils/assetPath';
 import {
   ChevronLeft,
   ChevronRight,
@@ -730,7 +730,7 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
                 }`}
                 style={{
                   background: t.bgType === 'image' && t.customBgImage
-                    ? `url(${t.customBgImage}) center/cover no-repeat`
+                    ? `url(${getAssetUrl(t.customBgImage)}) center/cover no-repeat`
                     : t.background
                 }}
               >
@@ -951,7 +951,7 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
                     : liveState.displayMode === 'LOGO'
                     ? 'radial-gradient(circle at center, #1e1b4b 0%, #0f172a 60%, #020617 100%)'
                     : liveState.theme.bgType === 'image' && liveState.theme.customBgImage
-                    ? `url(${liveState.theme.customBgImage}) center/cover no-repeat`
+                    ? `url(${getAssetUrl(liveState.theme.customBgImage)}) center/cover no-repeat`
                     : liveState.theme.background
                 }}
               >
@@ -1160,7 +1160,7 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
                     }`}
                     style={{
                       background: t.bgType === 'image' && t.customBgImage
-                        ? `url(${t.customBgImage}) center/cover no-repeat`
+                        ? `url(${getAssetUrl(t.customBgImage)}) center/cover no-repeat`
                         : t.background
                     }}
                   >

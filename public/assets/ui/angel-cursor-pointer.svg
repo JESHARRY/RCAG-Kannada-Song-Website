@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <!-- Glowing Interactive Halo -->
+  <circle cx="5" cy="5" r="5.5" fill="#f59e0b" fill-opacity="0.4" />
+  <circle cx="5" cy="5" r="4.2" stroke="#fbbf24" stroke-width="1.2" fill="none" />
+
+  <!-- Angel Wings & Pointer Tip -->
+  <g filter="drop-shadow(0px 1px 3px rgba(245,158,11,0.8))">
+    <!-- Left Wing -->
+    <path d="M 4,5 C 1.5,2.5 -0.5,5 0.5,8.5 C 1.8,10.5 4,10.5 5,8.5 C 5,6 4.5,5.5 4,5 Z" fill="#ffffff" stroke="#d97706" stroke-width="0.6" />
+    <!-- Right Wing -->
+    <path d="M 6,5 C 8.5,2.5 10.5,5 9.5,8.5 C 8.2,10.5 6,10.5 5,8.5 C 5,6 5.5,5.5 6,5 Z" fill="#ffffff" stroke="#d97706" stroke-width="0.6" />
+    <!-- Pointer Tip -->
+    <path d="M 4,2 L 10,12 L 6.5,10.5 L 4.5,15 L 3,10.5 L 0,9 Z" fill="#ffffff" stroke="#b45309" stroke-width="0.7" stroke-linejoin="round" />
+  </g>
+</svg>

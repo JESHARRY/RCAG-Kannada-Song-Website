@@ -355,11 +355,11 @@
 /* Heavenly Angel Cursor - Desktop Fine Pointer Only */
 @media (hover: hover) and (pointer: fine) {
   body {
-    cursor: url('/assets/ui/angel-cursor.svg') 4 2, auto;
+    cursor: url('../public/assets/ui/angel-cursor.svg') 4 2, auto;
   }
   
   a, button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], select, .interactive-hover {
-    cursor: url('/assets/ui/angel-cursor-pointer.svg') 5 5, pointer !important;
+    cursor: url('../public/assets/ui/angel-cursor-pointer.svg') 5 5, pointer !important;
   }
 
   input[type="text"], input[type="search"], input[type="number"], input[type="password"], textarea, [contenteditable="true"] {

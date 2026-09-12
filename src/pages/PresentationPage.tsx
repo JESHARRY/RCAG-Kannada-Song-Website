@@ -714,7 +714,7 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
         </div>
 
         {/* Thumbnail Cards Row */}
-        <div className="flex items-center gap-3 overflow-x-auto pb-1.5 pt-0.5 scrollbar-thin scrollbar-thumb-slate-800">
+        <div className="flex items-center gap-3 overflow-x-auto pb-2 pt-1 scrollbar-thin scrollbar-thumb-slate-800">
           {PRESET_THEMES.map((t) => {
             const isPreview = previewTheme.id === t.id;
             const isLive = liveState.theme.id === t.id && liveState.displayMode === 'LIVE';
@@ -723,40 +723,55 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
               <button
                 key={t.id}
                 onClick={() => setPreviewTheme(t)}
-                className={`group relative shrink-0 w-36 sm:w-40 h-20 rounded-2xl overflow-hidden border transition-all text-left flex flex-col justify-end p-2.5 shadow-md ${
+                className={`group relative shrink-0 w-44 sm:w-52 h-28 sm:h-32 rounded-2xl overflow-hidden border transition-all text-left flex flex-col justify-between shadow-lg ${
                   isPreview
                     ? 'border-amber-400 ring-2 ring-amber-400/60 shadow-amber-950/40 scale-[1.02]'
                     : 'border-slate-800 hover:border-slate-600 hover:scale-[1.01]'
                 }`}
-                style={{
-                  background: t.bgType === 'image' && t.customBgImage
-                    ? `url(${getAssetUrl(t.customBgImage)}) center/cover no-repeat`
-                    : t.background
-                }}
               >
-                {/* Overlay inside thumbnail card */}
-                <div
-                  className="absolute inset-0 bg-black transition-opacity pointer-events-none"
-                  style={{ opacity: t.overlayOpacity !== undefined ? Math.min(0.4, t.overlayOpacity) : 0.25 }}
-                />
+                {/* Background Image or Solid Container */}
+                {t.bgType === 'image' && t.customBgImage ? (
+                  <div className="absolute inset-0 overflow-hidden bg-slate-950">
+                    <img
+                      src={getAssetUrl(t.customBgImage)}
+                      alt={t.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    {/* Subtle Gradient Overlay at bottom for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-90" />
+                  </div>
+                ) : (
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: t.background }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                  </div>
+                )}
 
-                {/* Status Badges */}
-                <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1">
-                  {isLive && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-black text-[9px] uppercase tracking-wider shadow">
-                      LIVE
-                    </span>
-                  )}
-                  {isPreview && !isLive && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[9px] uppercase tracking-wider shadow">
-                      PREVIEW
-                    </span>
-                  )}
+                {/* Top Badges */}
+                <div className="relative z-10 p-2.5 flex items-center justify-between w-full">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300 bg-slate-950/80 backdrop-blur-md px-2 py-0.5 rounded-full border border-slate-800">
+                    {t.category || 'Theme'}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {isLive && (
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-black text-[9px] uppercase tracking-wider shadow animate-pulse">
+                        LIVE
+                      </span>
+                    )}
+                    {isPreview && !isLive && (
+                      <span className="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[9px] uppercase tracking-wider shadow">
+                        PREVIEW
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Card Title */}
-                <div className="relative z-10 space-y-0.5">
-                  <span className="font-bold text-xs text-white leading-tight block drop-shadow-md truncate">
+                {/* Bottom Theme Title */}
+                <div className="relative z-10 p-2.5 pt-4">
+                  <span className="font-bold text-xs sm:text-sm text-white leading-tight block drop-shadow-lg truncate">
                     {t.name}
                   </span>
                 </div>
@@ -1153,22 +1168,28 @@ export const PresentationPage: React.FC<PresentationPageProps> = ({
                   <button
                     key={t.id}
                     onClick={() => setPreviewTheme(t)}
-                    className={`h-20 p-2.5 rounded-2xl border text-left text-xs font-bold transition-all relative overflow-hidden flex flex-col justify-end ${
+                    className={`h-24 p-2.5 rounded-2xl border text-left text-xs font-bold transition-all relative overflow-hidden flex flex-col justify-end group ${
                       previewTheme.id === t.id
-                        ? 'border-amber-400 ring-2 ring-amber-400/50 shadow-lg'
+                        ? 'border-amber-400 ring-2 ring-amber-400/50 shadow-lg scale-[1.01]'
                         : 'border-slate-800 hover:border-slate-700'
                     }`}
-                    style={{
-                      background: t.bgType === 'image' && t.customBgImage
-                        ? `url(${getAssetUrl(t.customBgImage)}) center/cover no-repeat`
-                        : t.background
-                    }}
                   >
-                    <div
-                      className="absolute inset-0 bg-black pointer-events-none"
-                      style={{ opacity: t.overlayOpacity !== undefined ? Math.min(0.4, t.overlayOpacity) : 0.25 }}
-                    />
-                    <span className="relative z-10 text-white font-bold drop-shadow-md text-xs">
+                    {t.bgType === 'image' && t.customBgImage ? (
+                      <div className="absolute inset-0 overflow-hidden bg-slate-950">
+                        <img
+                          src={getAssetUrl(t.customBgImage)}
+                          alt={t.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-90" />
+                      </div>
+                    ) : (
+                      <div className="absolute inset-0" style={{ background: t.background }}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                      </div>
+                    )}
+                    <span className="relative z-10 text-white font-bold drop-shadow-md text-xs truncate">
                       {t.name}
                     </span>
                   </button>

@@ -810,26 +810,31 @@ export const PreachingNotesPage: React.FC<PreachingNotesPageProps> = ({ onNaviga
                   <button
                     key={themeOption.id}
                     onClick={() => handleSelectTheme(themeOption)}
-                    className={`relative rounded-xl overflow-hidden border p-2 text-left transition-all h-20 flex flex-col justify-between ${
+                    className={`group relative rounded-2xl overflow-hidden border p-2 text-left transition-all h-24 flex flex-col justify-between shadow-md ${
                       isSelected
-                        ? 'border-purple-500 ring-2 ring-purple-500/60 shadow-md scale-[1.02]'
-                        : 'border-slate-800 hover:border-slate-700 opacity-80 hover:opacity-100'
+                        ? 'border-purple-500 ring-2 ring-purple-500/60 shadow-purple-950/40 scale-[1.02]'
+                        : 'border-slate-800 hover:border-slate-700'
                     }`}
-                    style={{
-                      background: themeOption.bgType === 'image' && themeOption.customBgImage
-                        ? `url(${getAssetUrl(themeOption.customBgImage)}) center/cover no-repeat`
-                        : themeOption.background
-                    }}
                   >
-                    {/* Dark Overlay Preview */}
-                    <div
-                      className="absolute inset-0 bg-black pointer-events-none"
-                      style={{ opacity: themeOption.overlayOpacity || 0.25 }}
-                    />
+                    {themeOption.bgType === 'image' && themeOption.customBgImage ? (
+                      <div className="absolute inset-0 overflow-hidden bg-slate-950">
+                        <img
+                          src={getAssetUrl(themeOption.customBgImage)}
+                          alt={themeOption.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-90" />
+                      </div>
+                    ) : (
+                      <div className="absolute inset-0" style={{ background: themeOption.background }}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                      </div>
+                    )}
 
                     {/* Content */}
                     <div className="relative z-10 flex items-center justify-between w-full">
-                      <span className="text-[10px] font-extrabold text-white bg-slate-950/80 px-1.5 py-0.5 rounded backdrop-blur-xs truncate max-w-[85%]">
+                      <span className="text-[10px] font-extrabold text-white bg-slate-950/80 px-2 py-0.5 rounded-full border border-slate-800 backdrop-blur-md truncate max-w-[85%]">
                         {themeOption.name}
                       </span>
                       {isSelected && (

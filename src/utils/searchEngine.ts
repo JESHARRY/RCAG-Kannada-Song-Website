@@ -50,6 +50,13 @@ export function formatSongNumber(num: number): string {
 }
 
 /**
+ * Canonical helper to check if a song contains guitar chords / musical key data.
+ */
+export function hasChords(song: Song): boolean {
+  return !!song.hasChords || !!(song.chords && song.chords.trim() !== '') || !!(song.key && song.key.trim() !== '') || (song.lyricsKannada || '').includes('data-chord') || (song.lyricsEnglish || '').includes('data-chord');
+}
+
+/**
  * Filters songs by category, Kannada alphabet prefix, or multi-field query (title, lyrics, key, number).
  */
 export function filterSongs(
@@ -61,16 +68,16 @@ export function filterSongs(
   let result = songs;
 
   // Category filtering
-  if (category === 'chords') {
-    result = result.filter(s => s.hasChords);
-  } else if (category === 'audio') {
-    result = result.filter(s => s.hasAudio);
+  if (category === 'chords' || category === 'with_chords') {
+    result = result.filter(s => hasChords(s));
+  } else if (category === 'audio' || category === 'with_audio') {
+    result = result.filter(s => s.hasAudio || !!(s.audioUrl && s.audioUrl.trim() !== ''));
   } else if (category === 'worship') {
-    result = result.filter(s => s.hasChords && s.hasAudio);
+    result = result.filter(s => hasChords(s) && (s.hasAudio || !!(s.audioUrl && s.audioUrl.trim() !== '')));
   } else if (category === 'pdf') {
     result = result.filter(s => s.sourceType === 'pdf');
-  } else if (category === 'user_created') {
-    result = result.filter(s => s.sourceType === 'user_created');
+  } else if (category === 'user_created' || category === 'custom' || category === 'user') {
+    result = result.filter(s => s.sourceType === 'user_created' || (s.tags && s.tags.includes('user_created')) || (s.id && s.id.startsWith('user-song-')));
   }
 
   // Kannada Alphabet filtering

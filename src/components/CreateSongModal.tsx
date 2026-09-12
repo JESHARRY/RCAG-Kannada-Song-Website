@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PlusCircle, X, Check, Music, Sparkles } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Song } from '../types/song';
+import { getSongNumber } from '../utils/searchEngine';
 
 interface CreateSongModalProps {
   isOpen: boolean;
@@ -45,9 +46,9 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
 
     // Determine highest existing song number to assign next sequential number
     const maxNumber = allSongs.reduce((max, s) => {
-      const n = s.number ? Number(s.number) : 0;
+      const n = getSongNumber(s);
       return n > max ? n : max;
-    }, allSongs.length);
+    }, 0);
 
     const nextNumber = maxNumber + 1;
     const timestamp = Date.now();
@@ -58,8 +59,10 @@ export const CreateSongModal: React.FC<CreateSongModalProps> = ({
       const trimmed = raw.trim();
       if (!trimmed) return '';
       if (trimmed.startsWith('<p>')) return trimmed;
-      const htmlText = trimmed.replace(/\r\n|\r|\n/g, '<br/>\n');
-      return `<p>${htmlText}</p>`;
+      const blocks = trimmed.split(/\r?\n\s*\r?\n/);
+      return blocks
+        .map(b => `<p>${b.trim().replace(/\r?\n/g, '<br/>\n')}</p>`)
+        .join('\n');
     };
 
     const newSong: Song = {

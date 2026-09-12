@@ -1,18 +1,20 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Search, PlusCircle, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { SongCard } from '../components/SongCard';
 import { AlphabetBar } from '../components/AlphabetBar';
 import { CreateSongModal } from '../components/CreateSongModal';
-import { searchSongs } from '../utils/songSearch';
+import { searchSongs, hasChords } from '../utils/songSearch';
 
 interface AllSongsPageProps {
   onNavigate: (path: string) => void;
+  onOpenCreateSongModal?: () => void;
   initialCategory?: string;
 }
 
 export const AllSongsPage: React.FC<AllSongsPageProps> = ({
   onNavigate,
+  onOpenCreateSongModal,
   initialCategory = 'all',
 }) => {
   const { allSongs, userCreatedSongs } = useApp();
@@ -22,10 +24,32 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
+  // Sync category state whenever initialCategory prop changes (e.g. via route change)
+  useEffect(() => {
+    setCategory(initialCategory);
+  }, [initialCategory]);
+
+  // Compute total songs with chords using canonical hasChords helper
+  const chordSongsCount = useMemo(() => {
+    return allSongs.filter(s => hasChords(s)).length;
+  }, [allSongs]);
+
+  // Compute total user-created songs
+  const customSongsCount = useMemo(() => {
+    return allSongs.filter(
+      s => s.sourceType === 'user_created' || (s.tags && s.tags.includes('user_created')) || (s.id && s.id.startsWith('user-song-'))
+    ).length;
+  }, [allSongs]);
+
   // Filter songs using unified search utility (numerically sorted)
   const filtered = useMemo(() => {
     return searchSongs(allSongs, query, alphabet, category);
   }, [allSongs, query, alphabet, category]);
+
+  const handleCategorySelect = (newCategory: string, routePath: string) => {
+    setCategory(newCategory);
+    onNavigate(routePath);
+  };
 
   return (
     <div className="space-y-5 max-w-7xl mx-auto pb-16 font-sans anim-page-entrance">
@@ -65,7 +89,10 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
 
           {/* Add Song Button */}
           <button
-            onClick={() => setIsCreateModalOpen(true)}
+            onClick={() => {
+              if (onOpenCreateSongModal) onOpenCreateSongModal();
+              else setIsCreateModalOpen(true);
+            }}
             className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shrink-0 shadow-xs"
           >
             <PlusCircle className="w-4 h-4 text-slate-950" />
@@ -78,7 +105,7 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
           <button
-            onClick={() => setCategory('all')}
+            onClick={() => handleCategorySelect('all', '/songs')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               category === 'all'
                 ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
@@ -89,26 +116,26 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
           </button>
 
           <button
-            onClick={() => setCategory('chords')}
+            onClick={() => handleCategorySelect('chords', '/category/chords')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
-              category === 'chords'
+              category === 'chords' || category === 'with_chords'
                 ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
                 : 'bg-slate-900 border border-slate-800 text-slate-300 hover:text-white'
             }`}
           >
-            🎸 With Chords ({allSongs.filter((s) => s.hasChords).length})
+            🎸 With Chords ({chordSongsCount})
           </button>
 
-          {userCreatedSongs.length > 0 && (
+          {(customSongsCount > 0 || userCreatedSongs.length > 0) && (
             <button
-              onClick={() => setCategory('user_created')}
+              onClick={() => handleCategorySelect('user_created', '/category/user_created')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
-                category === 'user_created'
+                category === 'user_created' || category === 'custom' || category === 'user'
                   ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
                   : 'bg-slate-900 border border-slate-800 text-amber-400 hover:border-amber-500/50'
               }`}
             >
-              Custom Songs ({userCreatedSongs.length})
+              Custom Songs ({customSongsCount || userCreatedSongs.length})
             </button>
           )}
         </div>
@@ -143,9 +170,17 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
             🔍
           </div>
           <div className="space-y-1">
-            <h3 className="font-bold text-lg text-white">No songs found</h3>
+            <h3 className="font-bold text-lg text-white">
+              {category === 'user_created' || category === 'custom'
+                ? 'No custom songs found'
+                : category === 'chords' || category === 'with_chords'
+                ? 'No songs with chords found'
+                : 'No songs found'}
+            </h3>
             <p className="text-xs text-slate-400">
-              No songs match <strong className="text-amber-300">"{query || alphabet}"</strong>
+              {query || alphabet
+                ? `No songs in this category match "${query || alphabet}"`
+                : 'There are currently no songs in this category.'}
             </p>
           </div>
           <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-left text-xs text-slate-400 space-y-1.5">
@@ -161,7 +196,7 @@ export const AllSongsPage: React.FC<AllSongsPageProps> = ({
             onClick={() => {
               setQuery('');
               setAlphabet('');
-              setCategory('all');
+              handleCategorySelect('all', '/songs');
             }}
             className="px-6 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-xs font-bold text-white shadow-md transition-all"
           >

@@ -15,7 +15,8 @@ import {
   Guitar,
   Folder,
   Upload,
-  Mic
+  Mic,
+  PlusCircle
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { CHURCH_LOGO_URL } from '../utils/assetPath';
@@ -23,12 +24,14 @@ import { CHURCH_LOGO_URL } from '../utils/assetPath';
 interface NavbarProps {
   onNavigate: (path: string) => void;
   onOpenDownloadModal: () => void;
+  onOpenCreateSongModal: () => void;
   currentPath?: string;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   onOpenDownloadModal,
+  onOpenCreateSongModal,
   currentPath = '/',
 }) => {
   const { theme, toggleTheme, favorites } = useApp();
@@ -219,6 +222,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider px-2 mb-1">
                 Library
               </div>
+
+              <button
+                onClick={() => {
+                  onOpenCreateSongModal();
+                  setIsMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-950 bg-amber-400 hover:bg-amber-300 transition-colors shadow-xs mb-2"
+              >
+                <PlusCircle className="w-4 h-4 text-amber-950" />
+                <span>+ Add Custom Song</span>
+              </button>
 
               <button
                 onClick={() => handleNavClick('/search')}

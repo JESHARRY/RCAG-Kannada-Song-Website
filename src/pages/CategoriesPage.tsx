@@ -7,7 +7,7 @@ interface CategoriesPageProps {
 }
 
 export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate }) => {
-  const { allSongs, favorites } = useApp();
+  const { allSongs, favorites, userCreatedSongs } = useApp();
 
   const categories = [
     {
@@ -34,6 +34,14 @@ export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate }) =>
       color: 'from-amber-500 to-orange-600',
       path: '/favorites',
     },
+    ...(userCreatedSongs.length > 0 ? [{
+      id: 'user_created',
+      title: '✨ Custom Songs',
+      subtitle: 'User-created worship songs stored locally',
+      count: userCreatedSongs.length,
+      color: 'from-amber-500 to-yellow-600',
+      path: '/category/user_created',
+    }] : []),
     {
       id: 'pdf',
       title: '📄 PDF Imported Songs',

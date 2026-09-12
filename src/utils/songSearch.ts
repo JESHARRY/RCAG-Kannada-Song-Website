@@ -1,7 +1,7 @@
 import { Song } from '../types/song';
-import { filterSongs, getSongNumber, formatSongNumber } from './searchEngine';
+import { filterSongs, getSongNumber, formatSongNumber, hasChords } from './searchEngine';
 
-export { getSongNumber, formatSongNumber, filterSongs };
+export { getSongNumber, formatSongNumber, filterSongs, hasChords };
 
 /**
  * Shared search function for Home and All Songs pages.

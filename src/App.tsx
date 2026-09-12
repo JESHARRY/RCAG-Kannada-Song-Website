@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/Navbar';
 import { AudioPlayerBar } from './components/AudioPlayerBar';
 import { DownloadSongbookModal } from './components/DownloadSongbookModal';
+import { CreateSongModal } from './components/CreateSongModal';
 
 import { HomePage } from './pages/HomePage';
 import { AllSongsPage } from './pages/AllSongsPage';
@@ -31,6 +32,9 @@ export function AppContent() {
 
   // Download Songbook Modal state
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  
+  // Create Song Modal state
+  const [isCreateSongModalOpen, setIsCreateSongModalOpen] = useState(false);
 
   // Active Presentation Custom Slides (if launched from editor or worship set)
   const [activePresentationSlides, setActivePresentationSlides] = useState<PresentationSlide[] | undefined>(undefined);
@@ -63,12 +67,13 @@ export function AppContent() {
     }
 
     if (currentPath === '/') return <HomePage onNavigate={navigate} onOpenDownloadModal={() => setIsDownloadModalOpen(true)} />;
-    if (currentPath === '/songs') return <AllSongsPage onNavigate={navigate} initialCategory="all" />;
+    if (currentPath === '/songs') return <AllSongsPage onNavigate={navigate} onOpenCreateSongModal={() => setIsCreateSongModalOpen(true)} initialCategory="all" />;
     if (currentPath === '/search') return <SearchPage onNavigate={navigate} />;
     if (currentPath === '/categories') return <CategoriesPage onNavigate={navigate} />;
-    if (currentPath === '/category/chords') return <AllSongsPage onNavigate={navigate} initialCategory="chords" />;
-    if (currentPath === '/category/audio') return <AllSongsPage onNavigate={navigate} initialCategory="audio" />;
-    if (currentPath === '/category/pdf') return <AllSongsPage onNavigate={navigate} initialCategory="pdf" />;
+    if (currentPath === '/category/chords' || currentPath === '/category/with_chords') return <AllSongsPage onNavigate={navigate} onOpenCreateSongModal={() => setIsCreateSongModalOpen(true)} initialCategory="chords" />;
+    if (currentPath === '/category/audio') return <AllSongsPage onNavigate={navigate} onOpenCreateSongModal={() => setIsCreateSongModalOpen(true)} initialCategory="audio" />;
+    if (currentPath === '/category/pdf') return <AllSongsPage onNavigate={navigate} onOpenCreateSongModal={() => setIsCreateSongModalOpen(true)} initialCategory="pdf" />;
+    if (currentPath === '/category/user_created' || currentPath === '/category/custom') return <AllSongsPage onNavigate={navigate} onOpenCreateSongModal={() => setIsCreateSongModalOpen(true)} initialCategory="user_created" />;
     if (currentPath === '/favorites') return <FavoritesPage onNavigate={navigate} />;
     if (currentPath === '/extract') return <PdfExtractPage onNavigate={navigate} />;
     if (currentPath === '/extract/history') return <ExtractHistoryPage />;
@@ -165,6 +170,7 @@ export function AppContent() {
       <Navbar
         onNavigate={navigate}
         onOpenDownloadModal={() => setIsDownloadModalOpen(true)}
+        onOpenCreateSongModal={() => setIsCreateSongModalOpen(true)}
         currentPath={currentPath}
       />
 
@@ -179,6 +185,13 @@ export function AppContent() {
       <DownloadSongbookModal
         isOpen={isDownloadModalOpen}
         onClose={() => setIsDownloadModalOpen(false)}
+      />
+
+      {/* 4. Global Create Custom Song Modal */}
+      <CreateSongModal
+        isOpen={isCreateSongModalOpen}
+        onClose={() => setIsCreateSongModalOpen(false)}
+        onNavigate={navigate}
       />
     </div>
   );

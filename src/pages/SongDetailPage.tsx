@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, Play, Copy, Share2, Guitar, Type, FileText, Tv, Edit3, Save, RotateCcw, Check, AlertCircle } from 'lucide-react';
+import { Star, Play, Copy, Share2, Guitar, Type, FileText, Tv, Edit3, Save, RotateCcw, Check, AlertCircle, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { transposeChordString } from '../utils/chordTransposer';
 import { getSongNumber, formatSongNumber } from '../utils/searchEngine';
@@ -21,7 +21,8 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
     setFontSize,
     saveSongOverride,
     removeSongOverride,
-    hasSongOverride
+    hasSongOverride,
+    deleteUserSong
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'kannada' | 'english'>('kannada');
@@ -240,6 +241,22 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
               >
                 <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
                 <span>Restore Original</span>
+              </button>
+            )}
+
+            {song.sourceType === 'user_created' && (
+              <button
+                onClick={() => {
+                  if (confirm(`Are you sure you want to delete custom song "${song.titleKannada}"?`)) {
+                    deleteUserSong(song.id);
+                    onNavigate('/songs');
+                  }
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-rose-950/80 text-rose-300 border border-rose-800 hover:bg-rose-900 text-xs font-bold transition-colors"
+                title="Delete Custom Song"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                <span>Delete Song</span>
               </button>
             )}
           </div>

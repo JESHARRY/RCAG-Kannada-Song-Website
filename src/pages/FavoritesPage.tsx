@@ -2,6 +2,7 @@ import React from 'react';
 import { Star, Music } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { SongCard } from '../components/SongCard';
+import { SectionVineAccent } from '../components/GrapevineSystem';
 
 interface FavoritesPageProps {
   onNavigate: (path: string) => void;
@@ -18,6 +19,7 @@ export const FavoritesPage: React.FC<FavoritesPageProps> = ({ onNavigate }) => {
         <h1 className="font-bold text-2xl text-white mb-1 flex items-center gap-2">
           <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
           <span>Favorite Songs</span>
+          <SectionVineAccent className="w-14 h-5 opacity-70 ml-1" />
         </h1>
         <p className="text-xs text-slate-400">
           Showing <span className="font-mono text-amber-400 font-bold">{favSongs.length}</span> saved favorite songs

@@ -222,6 +222,110 @@
   animation: lightGlowBreathing 8s ease-in-out infinite;
 }
 
+/* Biblical Grapevine Visual System Keyframe Animations */
+@keyframes vineSway {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(1.2deg) scale(1.008);
+  }
+}
+
+@keyframes vineLeafSway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(3.5deg) scale(1.03);
+  }
+}
+
+@keyframes vineGrapeBreath {
+  0%, 100% {
+    opacity: 0.70;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes vineLightShimmer {
+  0% {
+    stroke-dashoffset: 800;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.75;
+  }
+  80% {
+    opacity: 0.75;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.animate-vine-sway {
+  animation: vineSway 14s ease-in-out infinite;
+  transform-origin: bottom left;
+}
+
+.animate-leaf-sway {
+  animation: vineLeafSway 7s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+.animate-leaf-sway-staggered {
+  animation: vineLeafSway 9s ease-in-out 2.5s infinite;
+  transform-origin: center center;
+}
+
+.animate-grape-pulse {
+  animation: vineGrapeBreath 8s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+.animate-vine-shimmer {
+  stroke-dasharray: 140 660;
+  animation: vineLightShimmer 12s ease-in-out infinite;
+}
+
+/* Home Hero Card Perimeter Travelling Golden Light Line */
+@keyframes heroBorderShimmer {
+  0% {
+    stroke-dashoffset: 2880;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-hero-border-shimmer {
+  stroke-dasharray: 260 2620;
+  animation: heroBorderShimmer 10s linear infinite;
+}
+
+.animate-leaf-sway-corner-1 {
+  animation: vineLeafSway 9s ease-in-out 0s infinite;
+  transform-origin: center center;
+}
+.animate-leaf-sway-corner-2 {
+  animation: vineLeafSway 9s ease-in-out 2.5s infinite;
+  transform-origin: center center;
+}
+.animate-leaf-sway-corner-3 {
+  animation: vineLeafSway 9s ease-in-out 5.0s infinite;
+  transform-origin: center center;
+}
+.animate-leaf-sway-corner-4 {
+  animation: vineLeafSway 9s ease-in-out 7.5s infinite;
+  transform-origin: center center;
+}
+
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
@@ -232,7 +336,17 @@
   }
 
   .animate-cross-breathing,
-  .animate-glow-breathing {
+  .animate-glow-breathing,
+  .animate-vine-sway,
+  .animate-leaf-sway,
+  .animate-leaf-sway-staggered,
+  .animate-grape-pulse,
+  .animate-vine-shimmer,
+  .animate-hero-border-shimmer,
+  .animate-leaf-sway-corner-1,
+  .animate-leaf-sway-corner-2,
+  .animate-leaf-sway-corner-3,
+  .animate-leaf-sway-corner-4 {
     animation: none !important;
     transform: none !important;
   }

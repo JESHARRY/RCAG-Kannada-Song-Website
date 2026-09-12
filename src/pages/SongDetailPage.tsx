@@ -3,6 +3,7 @@ import { Star, Play, Copy, Share2, Guitar, Type, FileText, Tv, Edit3, Save, Rota
 import { useApp } from '../context/AppContext';
 import { transposeChordString } from '../utils/chordTransposer';
 import { getSongNumber, formatSongNumber } from '../utils/searchEngine';
+import { SongDetailGrapevine } from '../components/GrapevineSystem';
 
 interface SongDetailPageProps {
   songId: string;
@@ -162,6 +163,9 @@ export const SongDetailPage: React.FC<SongDetailPageProps> = ({ songId, onNaviga
     <div className="max-w-4xl mx-auto space-y-5 pb-20 font-sans anim-page-entrance">
       {/* Header Container */}
       <div className="bg-church-surface border border-church-border/80 rounded-xl p-5 sm:p-8 shadow-sm relative overflow-hidden">
+        {/* Organic Biblical Grapevine Header Accent */}
+        <SongDetailGrapevine />
+
         {/* Soft Heavenly Background Light Bloom */}
         <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
 

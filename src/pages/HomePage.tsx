@@ -18,6 +18,7 @@ import { SongCard } from '../components/SongCard';
 import { AlphabetBar } from '../components/AlphabetBar';
 import { CHURCH_LOGO_URL } from '../utils/assetPath';
 import { searchSongs } from '../utils/songSearch';
+import { HomeHeroGrapevine, SectionVineAccent } from '../components/GrapevineSystem';
 
 interface HomePageProps {
   onNavigate: (path: string) => void;
@@ -50,8 +51,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenDownloadMo
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-16 font-sans anim-page-entrance">
 
-      {/* 1. Authentic Church Hero Section */}
+      {/* 1. Authentic Church Hero Section with Organic Biblical Grapevine Overlay */}
       <div className="relative overflow-hidden rounded-2xl bg-church-surface border border-church-border/80 text-white p-6 sm:p-10 lg:p-12 min-h-[460px] shadow-md group">
+        {/* Organic Biblical Grapevine Background System */}
+        <HomeHeroGrapevine />
+
         {/* Ambient Heavenly Light Beam Layer */}
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none group-hover:bg-amber-500/15 transition-all duration-700" />
         <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-amber-600/5 blur-2xl pointer-events-none" />

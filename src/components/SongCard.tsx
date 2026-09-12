@@ -3,6 +3,7 @@ import { Star, Guitar, Headphones, FileText, Tv, Trash2, UserCheck, ChevronRight
 import { Song } from '../types/song';
 import { useApp } from '../context/AppContext';
 import { getSongNumber, formatSongNumber } from '../utils/searchEngine';
+import { SongCardVineAccent } from './GrapevineSystem';
 
 interface SongCardProps {
   song: Song;
@@ -18,6 +19,9 @@ export const SongCard: React.FC<SongCardProps> = ({ song, index, onNavigate }) =
   // Compute stable 3-digit padded display song number
   const numVal = getSongNumber(song, index);
   const displayNumber = formatSongNumber(numVal);
+
+  // Deterministic Vine Accent variant (0..3)
+  const vineVariant = (index + (song.titleKannada ? song.titleKannada.length : 0)) % 4;
 
   const handleDeleteCustom = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -40,6 +44,9 @@ export const SongCard: React.FC<SongCardProps> = ({ song, index, onNavigate }) =
     >
       {/* Light Sweep Shimmer Accent (Moves smoothly on hover) */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
+
+      {/* Restrained Biblical Vine Accent Motif */}
+      <SongCardVineAccent variant={vineVariant} isFavorite={fav} />
 
       <div>
         {/* Top Header Row: Song Number Badge & Quick Actions */}
